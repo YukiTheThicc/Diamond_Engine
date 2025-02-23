@@ -1,2 +1,8 @@
 rootProject.name = 'Diamond_Engine'
+include 'core'
+include 'core:alma'
+findProject(':core:alma')?.name = 'alma'
+include 'alma'
+include 'core:main'
+findProject(':core:main')?.name = 'main'
 
