@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "diamond.core"
+group = "diamond.examples"
 version = "unspecified"
 
 repositories {

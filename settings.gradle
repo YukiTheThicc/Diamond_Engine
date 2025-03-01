@@ -5,4 +5,7 @@ findProject(':core:alma')?.name = 'alma'
 include 'alma'
 include 'core:main'
 findProject(':core:main')?.name = 'main'
-
+include 'core:GLRenderer'
+findProject(':core:GLRenderer')?.name = 'GLRenderer'
+include 'examples'
+include 'sapphire'
