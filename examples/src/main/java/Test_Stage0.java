@@ -1,3 +1,5 @@
+import org.joml.Vector2f;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
@@ -19,6 +21,7 @@ public class Test_Stage0 {
     public static void main(String[] args) {
 
         Diamond diaInstance = new Diamond();
+        Camera2D camera = new Camera2D();
         Window window = Window.get();
         window.init();
 
@@ -33,6 +36,12 @@ public class Test_Stage0 {
             if (dt >= 0) {
                 diaInstance.update(dt);
             }
+
+            LineRenderer.addLine(new Vector2f(0.01f, 0.01f), new Vector2f(0.01f,3));
+            LineRenderer.addLine(new Vector2f(0.01f, 3), new Vector2f(4,3));
+            LineRenderer.addLine(new Vector2f(4, 3), new Vector2f(4,0.01f));
+            LineRenderer.addLine(new Vector2f(4, 0.01f), new Vector2f(0.01f,0.01f));
+            LineRenderer.draw(camera);
 
             window.flushFrame();
             et = (float) glfwGetTime();
