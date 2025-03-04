@@ -5,8 +5,8 @@ on the features available in each stage.
 
 ## [STAGE 0]: Basic engine 
 
-* [ ] Basic ECS implementation with components
-* [ ] Basic OpenGL 2D renderer (basic textured sprites, wireframes)
-* [ ] Basic player input (register key presses)
+* [X] Basic ECS implementation with components
+* [x] Basic OpenGL 2D line renderer
+* [x] Basic player input (register key presses)
 * [x] Basic window to display current features
-* [ ] Simple example app that displays some sprites using the engine features 
+* [x] Stage_0 example app that displays the frame of the projection area 

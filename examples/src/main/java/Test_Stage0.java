@@ -41,7 +41,12 @@ public class Test_Stage0 {
             LineRenderer.addLine(new Vector2f(0.01f, 3), new Vector2f(4,3));
             LineRenderer.addLine(new Vector2f(4, 3), new Vector2f(4,0.01f));
             LineRenderer.addLine(new Vector2f(4, 0.01f), new Vector2f(0.01f,0.01f));
+            LineRenderer.addLine(new Vector2f(0.01f, 0.01f), new Vector2f(8,6));
             LineRenderer.draw(camera);
+
+            if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
+                System.out.println("A is pressed");
+            }
 
             window.flushFrame();
             et = (float) glfwGetTime();

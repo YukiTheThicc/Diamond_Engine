@@ -104,6 +104,9 @@ public class Window {
             throw new IllegalStateException("Failed to create GLFW window");
         }
 
+        // Set up window input callbacks
+        glfwSetKeyCallback(glfwWindow, WindowCallback::keyCallback);
+
         // Setup context and show window
         glfwMakeContextCurrent(glfwWindow);
         glfwSwapInterval(1);
