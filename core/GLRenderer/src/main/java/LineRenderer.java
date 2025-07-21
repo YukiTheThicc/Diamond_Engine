@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 /**
- * LineRenderer
+ * LineRenderer. Immediate mode line renderer
  *
  * @author: Santiago Barreiro
  */
@@ -71,7 +71,7 @@ public class LineRenderer {
             "}";
 
     // ATTRIBUTES
-    private static final Shader shader = new Shader("debugLine2D", vertex, fragment);
+    private static final Shader shader = new Shader(vertex, fragment);
     private static final float[] vertexArray = new float[MAX_LINES * 6 * 2];
     private static int vaoID;
     private static int vboID;

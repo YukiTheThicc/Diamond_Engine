@@ -15,20 +15,18 @@ public class Shader {
     // ATTRIBUTES
     private int programId;
     private boolean inUse = false;
-    private String vertex;
-    private String fragment;
+    private final String vertex;
+    private final String fragment;
 
     // CONSTRUCTORS
     /**
      * Creates a shader object from the vertex and fragment shaders, passed as strings. Shader compilation and therefore
      * error checking has to be done by calling hte compile() method
      *
-     * @param name Name that identifies the shader
      * @param vertex String representing the vertex shader
      * @param fragment String representing the fragment shader
      */
-    public Shader(String name, String vertex, String fragment) {
-
+    public Shader(String vertex, String fragment) {
         this.programId = -1;
         this.vertex = vertex;
         this.fragment = fragment;
@@ -47,7 +45,6 @@ public class Shader {
         glShaderSource(vertexId, vertex);
         glCompileShader(vertexId);
         if (glGetShaderi(vertexId, GL_COMPILE_STATUS) == GL_FALSE) {
-            int length = glGetShaderi(vertexId, GL_INFO_LOG_LENGTH);
             failed = true;
         }
 
@@ -56,7 +53,6 @@ public class Shader {
         glShaderSource(fragmentId, fragment);
         glCompileShader(fragmentId);
         if (glGetShaderi(fragmentId, GL_COMPILE_STATUS) == GL_FALSE) {
-            int length = glGetShaderi(fragmentId, GL_INFO_LOG_LENGTH);
             failed = true;
         }
 
@@ -65,10 +61,8 @@ public class Shader {
             glAttachShader(programId, vertexId);
             glAttachShader(programId, fragmentId);
             glLinkProgram(programId);
-
             if (glGetProgrami(programId, GL_LINK_STATUS) == GL_FALSE) {
                 programId = -1;
-                int length = glGetProgrami(programId, GL_INFO_LOG_LENGTH);
             }
         }
     }
