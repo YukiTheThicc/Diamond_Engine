@@ -32,12 +32,12 @@ public class Test_Stage0 {
 
             window.pollEvents();
             // HALF ASSED LINE COORDENATES SO THEY APPERAR JUST INSIDE THE FRAME
-            LineRenderer.addLine(new Vector2f(0.01f, 0.01f), new Vector2f(0.01f,3));
-            LineRenderer.addLine(new Vector2f(0.01f, 3), new Vector2f(4,3));
-            LineRenderer.addLine(new Vector2f(4, 3), new Vector2f(4,0.01f));
-            LineRenderer.addLine(new Vector2f(4, 0.01f), new Vector2f(0.01f,0.01f));
-            LineRenderer.addLine(new Vector2f(0.01f, 0.01f), new Vector2f(8,6));
-            LineRenderer.draw(camera);
+            GLRenderer.addLine(new Vector2f(0f,  0f), new Vector2f(0f,3f));
+            GLRenderer.addLine(new Vector2f(0f, 3f), new Vector2f(4f,3f));
+            GLRenderer.addLine(new Vector2f(4f, 3f), new Vector2f(4,0f));
+            GLRenderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f,0f));
+            GLRenderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
+            GLRenderer.draw(camera);
 
             if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
                 System.out.println("A is pressed");
