@@ -1,3 +1,5 @@
+package core;
+
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -7,7 +9,7 @@ import org.joml.Vector3f;
  *
  * @author: Santiago Barreiro
  */
-public class Camera2D {
+public class Camera {
 
     // ATTRIBUTES
     private final Vector3f front;
@@ -28,7 +30,7 @@ public class Camera2D {
     /**
      * Default constructor for the Camera2D object. Uses a 4 wide by 3 high projection and starts at position (0,0)
      */
-    public Camera2D() {
+    public Camera() {
         this.pos = new Vector2f(0,0);
         this.pSize = new Vector2f(4, 3);
         this.pSizeActual = new Vector2f(pSize.x, pSize.y);
@@ -44,10 +46,10 @@ public class Camera2D {
     /**
      * Complete constructor for the 2D camera object
      * @param pos Initial position of the camera
-     * @param pWidth Camera projection width
-     * @param pHeight Camera projection height
+     * @param pWidth core.Camera projection width
+     * @param pHeight core.Camera projection height
      */
-    public Camera2D(Vector2f pos, float pWidth, float pHeight) {
+    public Camera(Vector2f pos, float pWidth, float pHeight) {
         this.pos = pos;
         this.pSize = new Vector2f(pWidth, pHeight);
         this.pSizeActual = new Vector2f(pSize.x, pSize.y);

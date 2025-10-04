@@ -1,3 +1,5 @@
+package core;
+
 import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;

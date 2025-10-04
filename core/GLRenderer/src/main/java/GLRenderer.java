@@ -1,9 +1,7 @@
 import api.DiaRenderer;
+import core.Camera;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINES;
@@ -24,34 +22,34 @@ public class GLRenderer implements DiaRenderer {
 
     // CONSTANTS
 
-
     // ATTRIBUTES
-    public static int[] lines;
+    boolean drawLines = false;
 
-    // CONSTRUCTORS
-
-
-    // GETTERS & SETTERS
+    // CONSTRUCTOR
 
 
     // METHODS
     public void init() {
+        LineRenderer.lineCount = 0;
 
     }
 
-    @Override
-    public void startFrame() {
+    public void drawLines() {
+        if (!drawLines) drawLines = true;
+    }
 
+    public void noDrawLines() {
+        if (drawLines) drawLines = false;
     }
 
     @Override
-    public void finishFrame() {
-
+    public void renderFrame(Camera camera) {
+        LineRenderer.draw(camera);
     }
 
     @Override
     public void addLine(Vector2f from, Vector2f to) {
-
+        LineRenderer.addLine(from, to);
     }
 
     private static class LineRenderer {
@@ -86,27 +84,15 @@ public class GLRenderer implements DiaRenderer {
         private static final float[] vertexArray = new float[MAX_LINES * 6 * 2];
         private static int vaoID;
         private static int vboID;
-        private static int lineCount;
+        private static int lineCount = 0;
         private static boolean started = false;
-        private static boolean isEmpty = true;
-
-        // CONSTRUCTORS
-
-        // GETTERS & SETTERS
 
         // METHODS
-        public static void init() {
-            lineCount = 0;
-        }
-
         public static void addLine(Vector2f from, Vector2f to) {
             addLine(from, to, new Vector3f(1, 1, 1));
         }
 
         public static void addLine(Vector2f from, Vector2f to, Vector3f color) {
-
-            // Whenever
-            if (isEmpty) isEmpty = false;
 
             // First vertex of the line
             vertexArray[lineCount * ATTR_PER_LINE] = from.x;
@@ -126,9 +112,13 @@ public class GLRenderer implements DiaRenderer {
             lineCount++;
         }
 
-        public static void draw(Camera2D camera) {
+        /**
+         * Immediate mode rendering of the lines currently buffered. Should be called only once per frame
+         * @param camera core.Camera from which to render
+         */
+        public static void draw(Camera camera) {
 
-            if (isEmpty) return;
+            if (lineCount == 0) return;
 
             // Lazily compile the shaders in case they weren't compiled before and bind buffers
             if (!started) {
@@ -144,7 +134,7 @@ public class GLRenderer implements DiaRenderer {
                 glEnableVertexAttribArray(0);
                 glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
                 glEnableVertexAttribArray(1);
-                glLineWidth(1f);
+                glLineWidth(2f);
                 started = true;
             }
 
@@ -170,8 +160,9 @@ public class GLRenderer implements DiaRenderer {
             glDisableVertexAttribArray(1);
             glBindVertexArray(0);
 
-            // Unbind shader
+            // Unbind shader, and reset line index to O
             shader.detach();
+            lineCount = 0;
         }
     }
 }

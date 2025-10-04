@@ -1,3 +1,7 @@
+import api.DiaRenderer;
+import core.Camera;
+import core.Window;
+import core.WindowCallback;
 import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,9 +24,12 @@ public class Test_Stage0 {
     // METHODS
     public static void main(String[] args) {
 
-        Camera2D camera = new Camera2D();
+        Camera camera = new Camera();
         Window window = Window.get();
         window.init();
+
+        DiaRenderer renderer = new GLRenderer();
+        renderer.init();
 
         boolean running = true;
         float dt = 0;
@@ -32,12 +39,12 @@ public class Test_Stage0 {
 
             window.pollEvents();
             // HALF ASSED LINE COORDENATES SO THEY APPERAR JUST INSIDE THE FRAME
-            GLRenderer.addLine(new Vector2f(0f,  0f), new Vector2f(0f,3f));
-            GLRenderer.addLine(new Vector2f(0f, 3f), new Vector2f(4f,3f));
-            GLRenderer.addLine(new Vector2f(4f, 3f), new Vector2f(4,0f));
-            GLRenderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f,0f));
-            GLRenderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
-            GLRenderer.draw(camera);
+            renderer.addLine(new Vector2f(0f,  0f), new Vector2f(0f,3f));
+            renderer.addLine(new Vector2f(0f, 3f), new Vector2f(4f,3f));
+            renderer.addLine(new Vector2f(4f, 3f), new Vector2f(4,0f));
+            renderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f,0f));
+            renderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
+            renderer.renderFrame(camera);
 
             if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
                 System.out.println("A is pressed");

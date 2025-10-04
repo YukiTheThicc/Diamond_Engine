@@ -1,3 +1,5 @@
+package core;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -11,7 +13,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
- * Window
+ * core.Window
  *
  * @author: Santiago Barreiro
  */
@@ -23,7 +25,7 @@ public class Window {
     private String title;
     private static int width, height;
     private IntBuffer posX, posY;
-    private long glfwWindow;                    // GL Window address
+    private long glfwWindow;                    // GL core.Window address
     private static Window window = null;        // Unique window instance
 
     // CONSTRUCTORS

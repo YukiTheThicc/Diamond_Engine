@@ -1,4 +1,4 @@
-# Diamond Engine Project
+    0
 
 Project for the creation of a Java-written 2D and 3D engine. The project will be implemented in different stages depending
 on the features available in each stage.
@@ -15,6 +15,9 @@ _Update 0_ aims and prioritizes implementing the initial necessary functionality
 the foundations for future features. However, these foundations and functionalities may be incomplete or unpolished, as creating a 
 knowledge base and experience on the realities of rendering and engine development are considered more important.
 
+### Legend
+_Basic X_: Basic implementation of the feature, often only for demonstration or learning purposes 
+
 ### [STAGE 0]: Basic engine setup 
 
 * [X] Basic ECS implementation with components
@@ -26,7 +29,9 @@ knowledge base and experience on the realities of rendering and engine developme
 ### [STAGE 1]: Basic rendering and input
 
 * [ ] Basic compilation and linking shader system
-* [ ] Stage_1 example app that draws a triangle with blended vertex colors and textured rendering
+* [ ] core.Camera zoom and projection control
+* [ ] Basic texture rendering
+* [ ] Stage_1 example app that draws a triangle with blended vertex colors and an example of textured rendering
 
 ### [STAGE 2]: Environment creation
 

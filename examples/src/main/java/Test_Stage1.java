@@ -1,4 +1,5 @@
-import org.joml.Vector2f;
+import core.Camera;
+import core.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -41,7 +42,7 @@ public class Test_Stage1 {
     // METHODS
     public static void main(String[] args) {
 
-        Camera2D camera = new Camera2D();
+        Camera camera = new Camera();
         Window window = Window.get();
         window.init();
 
@@ -52,20 +53,7 @@ public class Test_Stage1 {
         while (running) {
 
             window.pollEvents();
-            // Half-assed test. Draws lines just inside the projection area
-            LineRenderer.addLine(new Vector2f(0.01f, 0.01f), new Vector2f(0.01f,3));
-            LineRenderer.addLine(new Vector2f(0.01f, 3), new Vector2f(4,3));
-            LineRenderer.addLine(new Vector2f(4, 3), new Vector2f(4,0.01f));
-            LineRenderer.addLine(new Vector2f(4, 0.01f), new Vector2f(0.01f,0.01f));
-            LineRenderer.addLine(new Vector2f(0.01f, 0.01f), new Vector2f(8,6));
 
-
-            // The added lines are drawn
-            LineRenderer.draw(camera);
-
-            if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
-                System.out.println("A is pressed");
-            }
 
             window.flushFrame();
             et = (float) glfwGetTime();
