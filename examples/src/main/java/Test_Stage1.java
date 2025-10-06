@@ -1,10 +1,13 @@
+import api.DiaRenderer;
 import core.Camera;
 import core.Window;
+import core.WindowCallback;
+import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
- * Test_Version01
+ * Test_Version
  *
  * @author: Santiago Barreiro
  */
@@ -46,6 +49,9 @@ public class Test_Stage1 {
         Window window = Window.get();
         window.init();
 
+        DiaRenderer renderer = new GLRenderer();
+        renderer.init();
+
         boolean running = true;
         float dt = 0;
         float bt = (float) glfwGetTime();
@@ -53,7 +59,17 @@ public class Test_Stage1 {
         while (running) {
 
             window.pollEvents();
+            // HALF ASSED LINE COORDENATES SO THEY APPERAR JUST INSIDE THE FRAME
+            renderer.addLine(new Vector2f(0f,  0f), new Vector2f(0f,3f));
+            renderer.addLine(new Vector2f(0f, 3f), new Vector2f(4f,3f));
+            renderer.addLine(new Vector2f(4f, 3f), new Vector2f(4,0f));
+            renderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f,0f));
+            renderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
+            renderer.renderFrame(camera);
 
+            if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
+                System.out.println("A is pressed");
+            }
 
             window.flushFrame();
             et = (float) glfwGetTime();

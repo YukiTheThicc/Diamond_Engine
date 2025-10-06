@@ -7,7 +7,7 @@ import org.joml.Vector2f;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
- * Test_Version01
+ * Test_Version 0
  *
  * @author: Santiago Barreiro
  */

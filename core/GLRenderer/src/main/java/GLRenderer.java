@@ -57,7 +57,7 @@ public class GLRenderer implements DiaRenderer {
         // CONSTANTS
         private static final int ATTR_PER_LINE = 12;                        // There are 12 floats worth of attributes per line: 6 per vertex, in each vertex 3 por position and 3 for color
         private static final int MAX_LINES = 10000;
-        private static final String vertex =
+        private static final String VERTEX =
                 "#version 330 core\n" +
                         "layout (location=0) in vec3 attrPos;\n" +
                         "layout (location=1) in vec3 attrColor;\n" +
@@ -71,7 +71,7 @@ public class GLRenderer implements DiaRenderer {
                         "    type = uType;\n" +
                         "    gl_Position = uProjection * uView * vec4(attrPos, 1.0);\n" +
                         "}";
-        private static final String fragment =
+        private static final String FRAGMENT =
                 "#version 330 core\n" +
                         "in vec3 fragColor;\n" +
                         "out vec4 color;\n" +
@@ -80,7 +80,7 @@ public class GLRenderer implements DiaRenderer {
                         "}";
 
         // ATTRIBUTES
-        private static final Shader shader = new Shader(vertex, fragment);
+        private static final Shader shader = new Shader(VERTEX, FRAGMENT);
         private static final float[] vertexArray = new float[MAX_LINES * 6 * 2];
         private static int vaoID;
         private static int vboID;
@@ -89,7 +89,7 @@ public class GLRenderer implements DiaRenderer {
 
         // METHODS
         public static void addLine(Vector2f from, Vector2f to) {
-            addLine(from, to, new Vector3f(1, 1, 1));
+            addLine(from, to, new Vector3f(1, 0, 1));
         }
 
         public static void addLine(Vector2f from, Vector2f to, Vector3f color) {
