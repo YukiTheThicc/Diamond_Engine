@@ -1,3 +1,4 @@
+import api.DiaLogger;
 import api.DiaRenderer;
 import core.Camera;
 import core.Window;
@@ -13,6 +14,8 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 public class Test_Stage0 {
 
+
+
     // ATTRIBUTES
 
     // CONSTANTS
@@ -24,11 +27,12 @@ public class Test_Stage0 {
     // METHODS
     public static void main(String[] args) {
 
+        Logger logger = new Logger();
         Camera camera = new Camera();
         Window window = Window.get();
         window.init();
 
-        DiaRenderer renderer = new GLRenderer();
+        DiaRenderer renderer = new GLRenderer(logger);
         renderer.init();
 
         boolean running = true;

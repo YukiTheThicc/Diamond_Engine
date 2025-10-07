@@ -14,7 +14,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * core.Window
- *
+ * TODO: De-couple window setup from the graphics API
  * @author: Santiago Barreiro
  */
 public class Window {
@@ -108,6 +108,7 @@ public class Window {
 
         // Set up window input callbacks
         glfwSetKeyCallback(glfwWindow, WindowCallback::keyCallback);
+        glfwSetFramebufferSizeCallback(glfwWindow, WindowCallback::frameBufferSizeCallback);
 
         // Setup context and show window
         glfwMakeContextCurrent(glfwWindow);

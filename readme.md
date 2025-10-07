@@ -28,7 +28,7 @@ _Basic X_: Basic implementation of the feature, often only for demonstration or 
 
 ### [STAGE 1]: Basic rendering and input
 
-* [ ] Basic compilation and linking shader system
+* [x] Basic compilation and linking shader system
 * [ ] core.Camera zoom and projection control
 * [ ] Basic texture rendering
 * [ ] Stage_1 example app that draws a triangle with blended vertex colors and an example of textured rendering

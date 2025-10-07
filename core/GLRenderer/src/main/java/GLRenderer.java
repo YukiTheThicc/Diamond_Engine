@@ -1,3 +1,4 @@
+import api.DiaLogger;
 import api.DiaRenderer;
 import core.Camera;
 import org.joml.Vector2f;
@@ -24,9 +25,12 @@ public class GLRenderer implements DiaRenderer {
 
     // ATTRIBUTES
     boolean drawLines = false;
+    DiaLogger logger;
 
     // CONSTRUCTOR
-
+    public GLRenderer(DiaLogger logger) {
+        this.logger = logger;
+    }
 
     // METHODS
     public void init() {
@@ -44,7 +48,7 @@ public class GLRenderer implements DiaRenderer {
 
     @Override
     public void renderFrame(Camera camera) {
-        LineRenderer.draw(camera);
+        LineRenderer.draw(camera, logger);
     }
 
     @Override
@@ -116,13 +120,13 @@ public class GLRenderer implements DiaRenderer {
          * Immediate mode rendering of the lines currently buffered. Should be called only once per frame
          * @param camera core.Camera from which to render
          */
-        public static void draw(Camera camera) {
+        public static void draw(Camera camera, DiaLogger logger) {
 
             if (lineCount == 0) return;
 
             // Lazily compile the shaders in case they weren't compiled before and bind buffers
             if (!started) {
-                shader.compile();
+                shader.compile(logger);
                 vaoID = glGenVertexArrays();
                 glBindVertexArray(vaoID);
 

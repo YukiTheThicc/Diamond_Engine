@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 /**
  * KeyListener
@@ -47,6 +48,10 @@ public class WindowCallback {
             get().keyPressed[key] = false;
             get().keyBeginPressed[key] = false;
         }
+    }
+
+    public static void frameBufferSizeCallback(long window, int width, int height) {
+        glViewport(0, 0, width, height);
     }
 
     public static boolean isKeyPressed(int keyCode) {

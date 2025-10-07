@@ -1,3 +1,4 @@
+import api.DiaLogger;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
@@ -35,7 +36,7 @@ public class Shader {
     /**
      * Compile the shader. If compilation fails at some point, the program id will be set to -1.
      */
-    public void compile() {
+    public void compile(DiaLogger logger) {
 
         int vertexId, fragmentId;
         boolean failed = false;
@@ -46,6 +47,8 @@ public class Shader {
         glCompileShader(vertexId);
         if (glGetShaderi(vertexId, GL_COMPILE_STATUS) == GL_FALSE) {
             failed = true;
+            int len = glGetShaderi(vertexId, GL_INFO_LOG_LENGTH);
+            logger.log(Shader.class, "Error while compiling VERTEX SHADER: \n" + glGetShaderInfoLog(vertexId, len), DiaLogger.levels.ERROR);
         }
 
         // Fragment shader
@@ -54,6 +57,8 @@ public class Shader {
         glCompileShader(fragmentId);
         if (glGetShaderi(fragmentId, GL_COMPILE_STATUS) == GL_FALSE) {
             failed = true;
+            int len = glGetShaderi(fragmentId, GL_INFO_LOG_LENGTH);
+            logger.log(Shader.class, "Error while compiling FRAGMENT SHADER: \n" + glGetShaderInfoLog(fragmentId, len), DiaLogger.levels.ERROR);
         }
 
         if (!failed) {
@@ -65,6 +70,9 @@ public class Shader {
                 programId = -1;
             }
         }
+
+        glDeleteShader(vertexId);
+        glDeleteShader(fragmentId);
     }
 
     /**

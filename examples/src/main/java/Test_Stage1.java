@@ -1,3 +1,4 @@
+import api.DiaLogger;
 import api.DiaRenderer;
 import core.Camera;
 import core.Window;
@@ -5,6 +6,10 @@ import core.WindowCallback;
 import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
+
 
 /**
  * Test_Version
@@ -14,27 +19,21 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Test_Stage1 {
 
     // ATTRIBUTES
-    private static final String vertex =
+    private static final String triangleVertex =
             "#version 330 core\n" +
-                    "layout (location=0) in vec3 attrPos;\n" +
-                    "layout (location=1) in vec3 attrColor;\n" +
+                    "layout (location = 0) in vec3 aPos;\n" +
                     "uniform mat4 uProjection;\n" +
                     "uniform mat4 uView;\n" +
-                    "uniform int uType;\n" +
-                    "out vec3 fragColor;\n" +
-                    "out int type;\n" +
-                    "void main() {\n" +
-                    "    fragColor = attrColor;\n" +
-                    "    type = uType;\n" +
-                    "    gl_Position = uProjection * uView * vec4(attrPos, 1.0);\n" +
-                    "}";
-    private static final String fragment =
+                    "void main()\n" +
+                    "{\n" +
+                    "    gl_Position = uProjection * uView * vec4(aPos, 1.0);\n" +
+                    "}\0";
+    private static final String triangleFragment =
             "#version 330 core\n" +
-                    "in vec3 fragColor;\n" +
                     "out vec4 color;\n" +
                     "void main() {\n" +
-                    "    color = vec4(fragColor, 1);\n" +
-                    "}";
+                    "    color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n" +
+                    "}\n\0";
 
     // CONSTANTS
 
@@ -49,8 +48,35 @@ public class Test_Stage1 {
         Window window = Window.get();
         window.init();
 
-        DiaRenderer renderer = new GLRenderer();
+        DiaLogger logger = new Logger();
+        DiaRenderer renderer = new GLRenderer(logger);
         renderer.init();
+
+        // Set up hello triangle VAO
+        float[] vertices = {
+                2f, 2f, -11f,
+                3f, 2f, -11f,
+                2.5f, 3f, -11f
+        };
+
+        int triangleVboID;
+        triangleVboID = glGenBuffers();
+        int vao;
+        vao = glGenVertexArrays();
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, triangleVboID);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3*Float.BYTES, 0);
+
+        Shader triangleShader = new Shader(triangleVertex, triangleFragment);
+        triangleShader.uploadMat4f("uProjection", camera.getProjMatrix());
+        triangleShader.uploadMat4f("uView", camera.getViewMatrix());
+        triangleShader.compile(logger);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         boolean running = true;
         float dt = 0;
@@ -59,13 +85,22 @@ public class Test_Stage1 {
         while (running) {
 
             window.pollEvents();
+            glClearColor(0.1f, 0.15f, 0.15f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            triangleShader.use();
+            glBindVertexArray(vao);
+            glDrawArrays(GL_TRIANGLES, 0,3);
+            triangleShader.detach();
+
             // HALF ASSED LINE COORDENATES SO THEY APPERAR JUST INSIDE THE FRAME
-            renderer.addLine(new Vector2f(0f,  0f), new Vector2f(0f,3f));
-            renderer.addLine(new Vector2f(0f, 3f), new Vector2f(4f,3f));
-            renderer.addLine(new Vector2f(4f, 3f), new Vector2f(4,0f));
-            renderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f,0f));
-            renderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
-            renderer.renderFrame(camera);
+            renderer.addLine(new Vector2f(0f, 0f), new Vector2f(0f, 3f));
+            renderer.addLine(new Vector2f(0f, 3f), new Vector2f(4f, 3f));
+            renderer.addLine(new Vector2f(4f, 3f), new Vector2f(4, 0f));
+            renderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f, 0f));
+            renderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f, 3f));
+
+            //renderer.renderFrame(camera);
 
             if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
                 System.out.println("A is pressed");
@@ -77,6 +112,10 @@ public class Test_Stage1 {
             bt = et;
             running = !glfwWindowShouldClose(window.getGlfwWindow());
         }
+
+        glDeleteVertexArrays(vao);
+        glDeleteVertexArrays(triangleVboID);
+
 
         window.close();
     }
