@@ -62,8 +62,8 @@ public class Test_Update1 {
         renderer.init();
         int VAO = setupTriangle();
 
-        String exampleTexture = System.getProperty("user.dir") + "\\examples\\res\\top.png"
-        System.out.println("Attempting to load example texture from = " + example + "...");
+        String exampleTexture = System.getProperty("user.dir") + "\\examples\\res\\top.png";
+        System.out.println("Attempting to load example texture from = " + exampleTexture + "...");
 
         boolean running = true;
         float dt = 0;
@@ -71,12 +71,14 @@ public class Test_Update1 {
         float et;
         while (running) {
 
+            window.pollEvents();
+
             triangleShader.use();
             glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
             glDrawArrays(GL_TRIANGLES, 0, 3);
             triangleShader.detach();
 
-            window.pollEvents();
+
             if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
                 System.out.println("A is pressed");
             }
@@ -98,7 +100,7 @@ public class Test_Update1 {
         float[] vertices = {
                 -1f,    -0.5f,   0.0f, 1f, 0f, 0f,  // left
                 0f,     -0.5f,   0.0f, 0f, 1f, 0f,  // right
-                -0.5f,   0.5f,   0.0f, 0f, 0f, 1f,  // top
+                -0.5f,   0.5f,   0.0f, 0f, 0f, 1f  // top
         };
 
         int VBO, VAO;
@@ -107,16 +109,11 @@ public class Test_Update1 {
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
-        // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-        // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-        glBindVertexArray(0);
         return VAO;
     }
 }

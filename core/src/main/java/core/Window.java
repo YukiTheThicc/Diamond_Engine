@@ -124,12 +124,15 @@ public class Window {
      */
     public void pollEvents() {
         glfwPollEvents();
+        glClearColor(0f, 0f, 0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     /**
      * Flushes the current frame (by swapping buffers)
      */
     public void flushFrame() {
+
         glfwSwapBuffers(glfwWindow);
     }
 
