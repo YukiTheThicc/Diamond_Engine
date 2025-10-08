@@ -1,17 +1,19 @@
+package stage_0;
+
 import api.DiaLogger;
 import api.DiaRenderer;
 import core.Camera;
 import core.Window;
 import core.WindowCallback;
+import core.glRenderer.*;
 import org.joml.Vector2f;
+import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
@@ -25,9 +27,12 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  *
  * @author: Santiago Barreiro
  */
-public class Test_Stage1 {
+public class Test_Update1 {
 
     // ATTRIBUTES
+    static DiaLogger logger;
+    static GLShader triangleShader;
+
     static final String vertexShaderSource =
             "#version 330 core\n" +
                     "layout (location = 0) in vec3 aPos;\n" +
@@ -50,20 +55,50 @@ public class Test_Stage1 {
     public static void main(String[] args) {
 
         DiaLogger logger = new Logger();
-        Camera camera = new Camera();
         Window window = Window.get();
         window.init();
 
         DiaRenderer renderer = new GLRenderer(logger);
         renderer.init();
+        int VAO = setupTriangle();
 
-        Shader triangleShader = new Shader(vertexShaderSource, fragmentShaderSource);
+        String exampleTexture = System.getProperty("user.dir") + "\\examples\\res\\top.png"
+        System.out.println("Attempting to load example texture from = " + example + "...");
+
+        boolean running = true;
+        float dt = 0;
+        float bt = (float) glfwGetTime();
+        float et;
+        while (running) {
+
+            triangleShader.use();
+            glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            triangleShader.detach();
+
+            window.pollEvents();
+            if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
+                System.out.println("A is pressed");
+            }
+
+            window.flushFrame();
+            et = (float) glfwGetTime();
+            dt = et - bt;
+            bt = et;
+            running = !glfwWindowShouldClose(window.getGlfwWindow());
+        }
+
+        window.close();
+    }
+
+    private static int setupTriangle() {
+        triangleShader = new GLShader(vertexShaderSource, fragmentShaderSource);
         triangleShader.compile(logger);
 
         float[] vertices = {
-                -0.5f,  -0.5f,   0.0f, 1f, 0f, 0f, // left
-                 0.5f,  -0.5f,   0.0f, 0f, 1f, 0f, // right
-                 0.0f,   0.5f,   0.0f, 0f, 0f, 1f,  // top
+                -1f,    -0.5f,   0.0f, 1f, 0f, 0f,  // left
+                0f,     -0.5f,   0.0f, 0f, 1f, 0f,  // right
+                -0.5f,   0.5f,   0.0f, 0f, 0f, 1f,  // top
         };
 
         int VBO, VAO;
@@ -82,39 +117,6 @@ public class Test_Stage1 {
         // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
         // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
         glBindVertexArray(0);
-
-        boolean running = true;
-        float dt = 0;
-        float bt = (float) glfwGetTime();
-        float et;
-        while (running) {
-
-            //glUseProgram(shaderProgram);
-            triangleShader.use();
-            glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-            triangleShader.detach();
-
-            window.pollEvents();
-            // HALF ASSED LINE COORDENATES SO THEY APPERAR JUST INSIDE THE FRAME
-            renderer.addLine(new Vector2f(0f,  0f), new Vector2f(0f,3f));
-            renderer.addLine(new Vector2f(0f, 3f), new Vector2f(4f,3f));
-            renderer.addLine(new Vector2f(4f, 3f), new Vector2f(4,0f));
-            renderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f,0f));
-            renderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
-            renderer.renderFrame(camera);
-
-            if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
-                System.out.println("A is pressed");
-            }
-
-            window.flushFrame();
-            et = (float) glfwGetTime();
-            dt = et - bt;
-            bt = et;
-            running = !glfwWindowShouldClose(window.getGlfwWindow());
-        }
-
-        window.close();
+        return VAO;
     }
 }

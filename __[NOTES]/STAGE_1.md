@@ -1,2 +1,0 @@
-# UPDATE 0. STAGE 1 NOTES
-

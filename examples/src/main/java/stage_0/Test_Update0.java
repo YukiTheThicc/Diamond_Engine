@@ -1,9 +1,12 @@
-import api.DiaLogger;
+package stage_0;
+
 import api.DiaRenderer;
 import core.Camera;
 import core.Window;
 import core.WindowCallback;
+import core.glRenderer.GLRenderer;
 import org.joml.Vector2f;
+import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -12,7 +15,7 @@ import static org.lwjgl.glfw.GLFW.*;
  *
  * @author: Santiago Barreiro
  */
-public class Test_Stage0 {
+public class Test_Update0 {
 
 
 

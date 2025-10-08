@@ -1,19 +1,17 @@
-import api.DiaLogger;
-import api.DiaRenderer;
-import core.Camera;
-import core.Window;
-import core.WindowCallback;
-import org.joml.Vector2f;
-import org.lwjgl.opengl.GL;
+package stage_0;
+
+import api.*;
+import core.*;
+import core.glRenderer.GLRenderer;
+import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
- * Hello_Triangle
+ * stage_0.Hello_Triangle
  *
  * @author Santiago Barreiro
  */

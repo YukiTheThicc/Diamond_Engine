@@ -1,3 +1,5 @@
+package core.glRenderer;
+
 import api.DiaLogger;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
@@ -11,7 +13,7 @@ import static org.lwjgl.opengl.GL20.*;
  *
  * @author: Santiago Barreiro
  */
-public class Shader {
+public class GLShader {
 
     // ATTRIBUTES
     private int programId;
@@ -27,7 +29,7 @@ public class Shader {
      * @param vertex String representing the vertex shader
      * @param fragment String representing the fragment shader
      */
-    public Shader(String vertex, String fragment) {
+    public GLShader(String vertex, String fragment) {
         this.programId = -1;
         this.vertex = vertex;
         this.fragment = fragment;
@@ -48,7 +50,7 @@ public class Shader {
         if (glGetShaderi(vertexId, GL_COMPILE_STATUS) == GL_FALSE) {
             failed = true;
             int len = glGetShaderi(vertexId, GL_INFO_LOG_LENGTH);
-            logger.log(Shader.class, "Error while compiling VERTEX SHADER: \n" + glGetShaderInfoLog(vertexId, len), DiaLogger.levels.ERROR);
+            logger.log(GLShader.class, "Error while compiling VERTEX SHADER: \n" + glGetShaderInfoLog(vertexId, len), DiaLogger.levels.ERROR);
         }
 
         // Fragment shader
@@ -58,7 +60,7 @@ public class Shader {
         if (glGetShaderi(fragmentId, GL_COMPILE_STATUS) == GL_FALSE) {
             failed = true;
             int len = glGetShaderi(fragmentId, GL_INFO_LOG_LENGTH);
-            logger.log(Shader.class, "Error while compiling FRAGMENT SHADER: \n" + glGetShaderInfoLog(fragmentId, len), DiaLogger.levels.ERROR);
+            logger.log(GLShader.class, "Error while compiling FRAGMENT SHADER: \n" + glGetShaderInfoLog(fragmentId, len), DiaLogger.levels.ERROR);
         }
 
         if (!failed) {

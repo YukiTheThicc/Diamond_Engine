@@ -1,10 +1,12 @@
+package utils;
+
 import api.DiaLogger;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- * Logger
+ * utils.Logger
  *
  * @author: Santiago Barreiro
  */

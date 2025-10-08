@@ -1,3 +1,5 @@
+package core.glRenderer;
+
 import api.DiaLogger;
 import api.DiaRenderer;
 import core.Camera;
@@ -10,12 +12,11 @@ import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 /**
- * GLRenderer
+ * glrenderer.GLRenderer
  *
  * @author Santiago Barreiro
  */
@@ -84,7 +85,7 @@ public class GLRenderer implements DiaRenderer {
                         "}";
 
         // ATTRIBUTES
-        private static final Shader shader = new Shader(VERTEX, FRAGMENT);
+        private static final GLShader shader = new GLShader(VERTEX, FRAGMENT);
         private static final float[] vertexArray = new float[MAX_LINES * 6 * 2];
         private static int vaoID;
         private static int vboID;
