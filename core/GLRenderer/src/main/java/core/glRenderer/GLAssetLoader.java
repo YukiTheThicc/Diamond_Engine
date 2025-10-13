@@ -9,8 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.stb.STBImage.stbi_load;
-import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
+import static org.lwjgl.stb.STBImage.*;
 
 /**
  * AssetLoader
@@ -66,6 +65,7 @@ public class GLAssetLoader implements DiaAssetLoader {
                 texture = new Texture(-1, -1, -1, from);
                 logger.log(assets.Texture.class, "Failed to load texture, unexpected number of channels");
             }
+            stbi_image_free(bytes);
         }
         return texture;
     }

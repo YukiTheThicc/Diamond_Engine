@@ -14,9 +14,9 @@ public class Texture {
     private final int height;
     private final String origin;
 
-    // CONTRUCTORS
+    // CONSTRUCTOR
     public Texture(int id, int width, int height, String origin) {
-        this.id = -1;
+        this.id = id;
         this.width = width;
         this.height = height;
         this.origin = origin;
