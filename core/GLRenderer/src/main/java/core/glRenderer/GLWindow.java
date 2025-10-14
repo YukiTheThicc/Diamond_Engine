@@ -1,5 +1,8 @@
-package core;
+package core.glRenderer;
 
+import api.DiaInputMapper;
+import api.DiaWindow;
+import core.InputController;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -7,29 +10,29 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryStack.stackPop;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
- * core.Window
- * TODO: De-couple window setup from the graphics API
- * @author: Santiago Barreiro
+ * GLWindow
+ *
+ * @author Santiago Barreiro
  */
-public class Window {
+public class GLWindow implements DiaWindow {
 
     // CONSTANTS
-
     // ATTRIBUTES
     private String title;
     private static int width, height;
     private IntBuffer posX, posY;
     private long glfwWindow;                    // GL core.Window address
-    private static Window window = null;        // Unique window instance
+    private static GLWindow window = null;        // Unique window instance
 
     // CONSTRUCTORS
-    private Window() {
+    private GLWindow() {
         width = 800;
         height = 600;
         stackPush();
@@ -55,7 +58,7 @@ public class Window {
     }
 
     public static void setWidth(int width) {
-        Window.width = width;
+        GLWindow.width = width;
     }
 
     public static int getHeight() {
@@ -63,31 +66,19 @@ public class Window {
     }
 
     public static void setHeight(int height) {
-        Window.height = height;
-    }
-
-    public long getGlfwWindow() {
-        return glfwWindow;
-    }
-
-    public void setGlfwWindow(long glfwWindow) {
-        this.glfwWindow = glfwWindow;
+        GLWindow.height = height;
     }
 
     // METHODS
-
-    /**
-     * Main window singleton access method
-     * @return Instance of the window. If null creates a window instance and returns it
-     */
-    public static Window get() {
+    public static DiaWindow get() {
         if (window == null) {
-            window = new Window();
+            window = new GLWindow();
         }
         return window;
     }
 
-    public void init() {
+    @Override
+    public void init(DiaInputMapper inputMapper) {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!glfwInit()) {
@@ -107,8 +98,8 @@ public class Window {
         }
 
         // Set up window input callbacks
-        glfwSetKeyCallback(glfwWindow, WindowCallback::keyCallback);
-        glfwSetFramebufferSizeCallback(glfwWindow, WindowCallback::frameBufferSizeCallback);
+        glfwSetKeyCallback(glfwWindow, inputMapper::keyCallback);
+        glfwSetFramebufferSizeCallback(glfwWindow, GLWindow::frameBufferSizeCallback);
 
         // Setup context and show window
         glfwMakeContextCurrent(glfwWindow);
@@ -119,23 +110,24 @@ public class Window {
         glfwShowWindow(glfwWindow);
     }
 
-    /**
-     * Polls window events
-     */
+    @Override
     public void pollEvents() {
         glfwPollEvents();
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    /**
-     * Flushes the current frame (by swapping buffers)
-     */
-    public void flushFrame() {
-
+    @Override
+    public void refresh() {
         glfwSwapBuffers(glfwWindow);
     }
 
+    @Override
+    public boolean isOpen() {
+        return !glfwWindowShouldClose(glfwWindow);
+    }
+
+    @Override
     public void close() {
         glfwFreeCallbacks(glfwWindow);
         glfwDestroyWindow(glfwWindow);
@@ -145,5 +137,9 @@ public class Window {
         // Termination of GLFW
         glfwTerminate();
         glfwSetErrorCallback(null).free();
+    }
+
+    private static void frameBufferSizeCallback(long window, int width, int height) {
+        glViewport(0, 0, width, height);
     }
 }

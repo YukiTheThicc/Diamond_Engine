@@ -1,8 +1,9 @@
 package stage_0;
 
 import api.*;
-import core.*;
+import core.glRenderer.GLInputMapper;
 import core.glRenderer.GLRenderer;
+import core.glRenderer.GLWindow;
 import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -35,8 +36,8 @@ public class Hello_Triangle {
     public static void main(String[] args) {
 
         DiaLogger logger = new Logger();
-        Window window = Window.get();
-        window.init();
+        DiaWindow window = GLWindow.get();
+        window.init(new GLInputMapper());
 
         DiaRenderer renderer = new GLRenderer(logger);
         renderer.init();
@@ -98,11 +99,7 @@ public class Hello_Triangle {
         // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
         glBindVertexArray(0);
 
-        while (!glfwWindowShouldClose(window.getGlfwWindow())) {
-            // input
-            // -----
-            processInput(window.getGlfwWindow());
-
+        while (window.isOpen()) {
             // render
             // ------
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -116,7 +113,7 @@ public class Hello_Triangle {
 
             // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
             // -------------------------------------------------------------------------------
-            glfwSwapBuffers(window.getGlfwWindow());
+            window.refresh();
             glfwPollEvents();
         }
 
@@ -130,11 +127,6 @@ public class Hello_Triangle {
         // ------------------------------------------------------------------
         window.close();
         return;
-    }
-
-    static void processInput(long window)  {
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, true);
     }
 
     static void framebuffer_size_callback(long window, int width, int height){

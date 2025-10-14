@@ -1,9 +1,10 @@
 package stage_0;
 
 import api.DiaRenderer;
+import api.DiaWindow;
 import core.Camera;
-import core.Window;
-import core.WindowCallback;
+import core.glRenderer.GLInputMapper;
+import core.glRenderer.GLWindow;
 import core.glRenderer.GLRenderer;
 import org.joml.Vector2f;
 import utils.Logger;
@@ -32,17 +33,16 @@ public class Test_Update0 {
 
         Logger logger = new Logger();
         Camera camera = new Camera();
-        Window window = Window.get();
-        window.init();
+        DiaWindow window = GLWindow.get();
+        window.init(new GLInputMapper());
 
         DiaRenderer renderer = new GLRenderer(logger);
         renderer.init();
 
-        boolean running = true;
         float dt = 0;
         float bt = (float) glfwGetTime();
         float et;
-        while (running) {
+        while (window.isOpen()) {
 
             window.pollEvents();
             // HALF ASSED LINE COORDENATES SO THEY APPERAR JUST INSIDE THE FRAME
@@ -53,17 +53,11 @@ public class Test_Update0 {
             renderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
             renderer.renderFrame(camera);
 
-            if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
-                System.out.println("A is pressed");
-            }
-
-            window.flushFrame();
+            window.refresh();
             et = (float) glfwGetTime();
             dt = et - bt;
             bt = et;
-            running = !glfwWindowShouldClose(window.getGlfwWindow());
         }
-
         window.close();
     }
 }

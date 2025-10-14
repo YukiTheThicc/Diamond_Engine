@@ -3,12 +3,10 @@ package stage_0;
 import api.DiaAssetLoader;
 import api.DiaLogger;
 import api.DiaRenderer;
+import api.DiaWindow;
 import assets.Texture;
-import core.Camera;
-import core.Window;
-import core.WindowCallback;
+import core.InputController;
 import core.glRenderer.*;
-import org.joml.Vector2f;
 import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -82,8 +80,8 @@ public class Test_Update1 {
     public static void main(String[] args) {
 
         DiaLogger logger = new Logger();
-        Window window = Window.get();
-        window.init();
+        DiaWindow window = GLWindow.get();
+        window.init(new GLInputMapper());
 
         DiaAssetLoader assetLoader = new GLAssetLoader(logger);
         DiaRenderer renderer = new GLRenderer(logger);
@@ -115,15 +113,15 @@ public class Test_Update1 {
             textureShader.detach();
 
 
-            if (WindowCallback.isKeyPressed(GLFW_KEY_A)) {
+            if (InputController.isKeyPressed(GLFW_KEY_A)) {
                 System.out.println("A is pressed");
             }
 
-            window.flushFrame();
+            window.refresh();
             et = (float) glfwGetTime();
             dt = et - bt;
             bt = et;
-            running = !glfwWindowShouldClose(window.getGlfwWindow());
+            running = window.isOpen();
         }
 
         window.close();
