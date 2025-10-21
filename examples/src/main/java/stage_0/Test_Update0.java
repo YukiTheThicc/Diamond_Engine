@@ -1,8 +1,10 @@
 package stage_0;
 
+import api.DiaInputMapper;
 import api.DiaRenderer;
 import api.DiaWindow;
 import core.Camera;
+import core.InputController;
 import core.glRenderer.GLInputMapper;
 import core.glRenderer.GLWindow;
 import core.glRenderer.GLRenderer;
@@ -34,7 +36,8 @@ public class Test_Update0 {
         Logger logger = new Logger();
         Camera camera = new Camera();
         DiaWindow window = GLWindow.get();
-        window.init(new GLInputMapper());
+        InputController inputcontroller = new InputController();
+        window.init(inputcontroller);
 
         DiaRenderer renderer = new GLRenderer(logger);
         renderer.init();

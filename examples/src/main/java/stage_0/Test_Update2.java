@@ -6,16 +6,17 @@ import core.InputController;
 import core.glRenderer.*;
 import utils.Logger;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL20.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL20.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL20.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL20.glBindTexture;
+import static org.lwjgl.opengl.GL20.glDrawElements;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
@@ -24,7 +25,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  *
  * @author: Santiago Barreiro
  */
-public class Test_Update1 {
+public class Test_Update2 {
 
     // ATTRIBUTES
     static DiaLogger logger;

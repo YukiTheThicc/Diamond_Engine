@@ -3,10 +3,11 @@ package core.glRenderer;
 import api.DiaInputMapper;
 import api.DiaWindow;
 import core.InputController;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-
 import java.nio.IntBuffer;
+import java.util.HashMap;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -24,12 +25,14 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class GLWindow implements DiaWindow {
 
     // CONSTANTS
+
     // ATTRIBUTES
     private String title;
     private static int width, height;
     private IntBuffer posX, posY;
     private long glfwWindow;                    // GL core.Window address
     private static GLWindow window = null;        // Unique window instance
+    private static DiaInputMapper inputMapper;
 
     // CONSTRUCTORS
     private GLWindow() {
@@ -78,8 +81,9 @@ public class GLWindow implements DiaWindow {
     }
 
     @Override
-    public void init(DiaInputMapper inputMapper) {
+    public void init(InputController inputController) {
         GLFWErrorCallback.createPrint(System.err).set();
+        inputMapper = new GLInputMapper(inputController);
 
         if (!glfwInit()) {
             throw new IllegalStateException("Failed to initialize GLFW");
@@ -98,7 +102,7 @@ public class GLWindow implements DiaWindow {
         }
 
         // Set up window input callbacks
-        glfwSetKeyCallback(glfwWindow, inputMapper::keyCallback);
+        glfwSetKeyCallback(glfwWindow, GLWindow::keyCallback);
         glfwSetFramebufferSizeCallback(glfwWindow, GLWindow::frameBufferSizeCallback);
 
         // Setup context and show window
@@ -141,5 +145,9 @@ public class GLWindow implements DiaWindow {
 
     private static void frameBufferSizeCallback(long window, int width, int height) {
         glViewport(0, 0, width, height);
+    }
+
+    public static void keyCallback(long window, int key, int scancode, int action, int mods) {
+        if (inputMapper != null) inputMapper.registerKeyAction(key, action);
     }
 }

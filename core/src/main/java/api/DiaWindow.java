@@ -1,5 +1,7 @@
 package api;
 
+import core.InputController;
+
 /**
  * DiaWindow
  *
@@ -7,7 +9,7 @@ package api;
  */
 public interface DiaWindow {
 
-    public void init(DiaInputMapper inputMapper);
+    public void init(InputController inputController);
 
     public void pollEvents();
 

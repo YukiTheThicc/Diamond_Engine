@@ -1,6 +1,7 @@
 package stage_0;
 
 import api.*;
+import core.InputController;
 import core.glRenderer.GLInputMapper;
 import core.glRenderer.GLRenderer;
 import core.glRenderer.GLWindow;
@@ -37,7 +38,7 @@ public class Hello_Triangle {
 
         DiaLogger logger = new Logger();
         DiaWindow window = GLWindow.get();
-        window.init(new GLInputMapper());
+        window.init(new InputController());
 
         DiaRenderer renderer = new GLRenderer(logger);
         renderer.init();

@@ -1,5 +1,6 @@
 package api;
 
+import assets.Texture;
 import core.Camera;
 import org.joml.Vector2f;
 

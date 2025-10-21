@@ -1,11 +1,24 @@
 package api;
+
+import core.InputController;
+
 /**
  * DiaInputMapper
  * @author Santiago Barreiro
  */
-public interface DiaInputMapper {
+public abstract class DiaInputMapper {
 
-    public void keyCallback(long window, int key, int scancode, int action, int mods);
+    protected InputController inputController;
 
-    public void mouseCallback();
+    public DiaInputMapper(InputController inputController) {
+        this.inputController = inputController;
+    }
+
+    public void registerKeyAction(int key, int action) {
+
+    }
+
+    public void registerMouseAction() {
+
+    }
 }

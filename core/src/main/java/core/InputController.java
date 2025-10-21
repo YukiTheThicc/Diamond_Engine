@@ -2,9 +2,6 @@ package core;
 
 import java.util.Arrays;
 
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-
 /**
  * InputController
  *
@@ -13,6 +10,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 public class InputController {
 
     // CONSTANTS
+    public static final int PRESS = 0;
+    public static final int RELEASE = 1;
     private static final int NUM_KEYS = 350;                    // Number of key bindings supported by DiamondEngine
 
     // ATTRIBUTES
@@ -20,27 +19,25 @@ public class InputController {
     private static final boolean[] keyBeginPressed = new boolean[NUM_KEYS];
 
     // METHODS
-
-
-    public static void keyCallback(long window, int key, int scancode, int action, int mods) {
-        if (action == GLFW_PRESS) {
+    public void registerKey(int key, int action) {
+        if (action == PRESS) {
             keyPressed[key] = true;
             keyBeginPressed[key] = true;
-        } else if (action == GLFW_RELEASE) {
+        } else if (action == RELEASE) {
             keyPressed[key] = false;
             keyBeginPressed[key] = false;
         }
     }
 
-    public static boolean isKeyPressed(int keyCode) {
+    public boolean isKeyPressed(int keyCode) {
         return keyPressed[keyCode];
     }
 
-    public static boolean keyBeginPress(int keyCode) {
+    public boolean keyBeginPress(int keyCode) {
         return keyBeginPressed[keyCode];
     }
 
-    public static void refresh() {
+    public void refresh() {
         Arrays.fill(keyBeginPressed, false);
     }
 }
