@@ -1,10 +1,10 @@
-package alma.utils;
+package utils;
 
 import java.util.Arrays;
 
 /**
  * BitIndex
- *
+ * TODO - Clase copiada de alma. Ahora mismo hay dos copias de esta clase, aqui y en alma. Revisar si se mantiene asi o se mueve la clase alma a las utils del motor
  * @author Santiago Barreiro
  */
 public final class BitFlag {
@@ -19,7 +19,6 @@ public final class BitFlag {
     private int bitsSet;
 
     // CONSTRUCTORS
-
     /**
      * Creates a bit flag with the provided indexes set to true by default
      * @param indexes Indexes that will be set to 1
@@ -32,11 +31,11 @@ public final class BitFlag {
     }
 
     /**
-     * Creates a new bit flag with the provided size
-     * @param size Size of the int array for the flags (number of total flags will be 32*size)
+     * Creates a new bit array capable of storing the provided amount of flags
+     * @param size Size of flags to be stowed by the bit array
      */
     public BitFlag(int size) {
-        data = new int[size];
+        data = new int[size >> SEGMENT_INDEX_SHIFT];
     }
 
     // GETTER

@@ -39,6 +39,6 @@ dependencies {
     runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
 }
 
-tasks.test {
+test {
     useJUnitPlatform()
 }

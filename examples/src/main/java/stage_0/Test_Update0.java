@@ -1,17 +1,13 @@
 package stage_0;
 
-import api.DiaInputMapper;
 import api.DiaRenderer;
 import api.DiaWindow;
 import core.Camera;
 import core.InputController;
-import core.glRenderer.GLInputMapper;
-import core.glRenderer.GLWindow;
+import core.Window;
 import core.glRenderer.GLRenderer;
 import org.joml.Vector2f;
 import utils.Logger;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * Test_Version 0
@@ -33,20 +29,13 @@ public class Test_Update0 {
     // METHODS
     public static void main(String[] args) {
 
-        Logger logger = new Logger();
+        DiaWindow window = Window.get();
+        window.init(800, 600, new InputController());
         Camera camera = new Camera();
-        DiaWindow window = GLWindow.get();
-        InputController inputcontroller = new InputController();
-        window.init(inputcontroller);
-
-        DiaRenderer renderer = new GLRenderer(logger);
+        DiaRenderer renderer = new GLRenderer(new Logger());
         renderer.init();
 
-        float dt = 0;
-        float bt = (float) glfwGetTime();
-        float et;
         while (window.isOpen()) {
-
             window.pollEvents();
             // HALF ASSED LINE COORDENATES SO THEY APPERAR JUST INSIDE THE FRAME
             renderer.addLine(new Vector2f(0f,  0f), new Vector2f(0f,3f));
@@ -55,11 +44,7 @@ public class Test_Update0 {
             renderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f,0f));
             renderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
             renderer.renderFrame(camera);
-
             window.refresh();
-            et = (float) glfwGetTime();
-            dt = et - bt;
-            bt = et;
         }
         window.close();
     }

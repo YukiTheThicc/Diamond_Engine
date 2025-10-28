@@ -2,9 +2,9 @@ package stage_0;
 
 import api.*;
 import core.InputController;
-import core.glRenderer.GLInputMapper;
 import core.glRenderer.GLRenderer;
-import core.glRenderer.GLWindow;
+import core.Window;
+import org.lwjgl.opengl.GL;
 import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -36,12 +36,12 @@ public class Hello_Triangle {
 
     public static void main(String[] args) {
 
-        DiaLogger logger = new Logger();
-        DiaWindow window = GLWindow.get();
-        window.init(new InputController());
+        DiaWindow window = Window.get();
+        window.init(800, 600, new InputController());
 
-        DiaRenderer renderer = new GLRenderer(logger);
-        renderer.init();
+        GL.createCapabilities();
+        glDisable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, vertexShaderSource);

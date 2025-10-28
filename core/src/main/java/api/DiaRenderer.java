@@ -1,12 +1,11 @@
 package api;
 
-import assets.Texture;
 import core.Camera;
 import org.joml.Vector2f;
 
 /**
- * api.DiaRenderer
- *
+ * DiaRenderer
+ * Main engine renderer API. The engine has to be injected with a renderer implementing this class
  * @author Santiago Barreiro
  */
 public interface DiaRenderer {
@@ -17,14 +16,21 @@ public interface DiaRenderer {
     public void init();
 
     /**
-     * Add line to render this frame
+     * Add line (immediate mode) to render this frame
      * @param from First vertex of the line
      * @param to Second vertex of the line
      */
     public void addLine(Vector2f from, Vector2f to);
 
     /**
-     * Frame rendering process
+     * Render the current frame. Needs a camera
      */
     public void renderFrame(Camera camera);
+
+    /**
+     * Sets the size of the rendering viewport
+     * @param width Width of the new viewport
+     * @param height Height of the new viewport
+     */
+    public void setViewPort(int width, int height);
 }

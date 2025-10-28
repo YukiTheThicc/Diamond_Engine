@@ -2,11 +2,12 @@ package stage_0;
 
 import api.*;
 import assets.Texture;
+import core.Window;
 import core.InputController;
 import core.glRenderer.*;
+import org.lwjgl.opengl.GL;
 import utils.Logger;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
@@ -76,14 +77,17 @@ public class Test_Update1 {
 
     public static void main(String[] args) {
 
-        DiaLogger logger = new Logger();
-        DiaWindow window = GLWindow.get();
-        InputController inputcontroller = new InputController();
-        window.init(inputcontroller);
 
+        InputController inputcontroller = new InputController();
+        DiaWindow window = Window.get();
+        window.init(800, 600, inputcontroller);
+
+        GL.createCapabilities();
+        glDisable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+        DiaLogger logger = new Logger();
         DiaAssetLoader assetLoader = new GLAssetLoader(logger);
-        DiaRenderer renderer = new GLRenderer(logger);
-        renderer.init();
         int VAO = setupTriangle();
         int texturedVAO = setupTexturedExample();
 
@@ -92,12 +96,12 @@ public class Test_Update1 {
         Texture texture = assetLoader.loadTexture(exampleTexture);
 
         boolean running = true;
-        float dt = 0;
-        float bt = (float) glfwGetTime();
-        float et;
         while (running) {
 
             window.pollEvents();
+
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
 
             triangleShader.use();
             glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
@@ -110,16 +114,8 @@ public class Test_Update1 {
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
             textureShader.detach();
 
-
-            if (inputcontroller.isKeyPressed(GLFW_KEY_A)) {
-                System.out.println("A is pressed");
-            }
-
             window.refresh();
             inputcontroller.refresh();
-            et = (float) glfwGetTime();
-            dt = et - bt;
-            bt = et;
             running = window.isOpen();
         }
 

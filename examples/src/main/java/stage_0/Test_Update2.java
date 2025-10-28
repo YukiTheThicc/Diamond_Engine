@@ -2,11 +2,12 @@ package stage_0;
 
 import api.*;
 import assets.Texture;
+import core.Window;
 import core.InputController;
 import core.glRenderer.*;
-import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL;
 import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -62,13 +63,15 @@ public class Test_Update2 {
     public static void main(String[] args) {
 
         logger = new Logger();
-        DiaWindow window = GLWindow.get();
         InputController inputcontroller = new InputController();
-        window.init(inputcontroller);
+        DiaWindow window = Window.get();
+        window.init(800, 600, inputcontroller);
+
+        GL.createCapabilities();
+        glDisable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         DiaAssetLoader assetLoader = new GLAssetLoader(logger);
-        DiaRenderer renderer = new GLRenderer(logger);
-        renderer.init();
         int texturedVAO = setupTexturedExample();
 
         String exampleTexture = System.getProperty("user.dir") + "\\examples\\res\\top.png";
@@ -78,16 +81,20 @@ public class Test_Update2 {
         Matrix4f trans;
 
         boolean running = true;
-        float dt = 0;
-        float bt = (float) glfwGetTime();
-        float et;
+        float time;
+
         while (running) {
 
             window.pollEvents();
 
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            time = (float) glfwGetTime();
             trans = new Matrix4f().identity();
-            trans = trans.rotate(bt, new Vector3f(0f,0f,1f));
-            trans = trans.rotate(bt, new Vector3f(0f,1f,0f));
+            trans = trans.rotate(time, new Vector3f(0f,0f,1f));
+            trans = trans.rotate(time, new Vector3f(0f,1f,0f));
+
             glBindTexture(GL_TEXTURE_2D, texture.getId());
             textureShader.use();
             textureShader.uploadMat4f("transform", trans);
@@ -95,16 +102,11 @@ public class Test_Update2 {
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
             textureShader.detach();
 
-
             if (inputcontroller.isKeyPressed(GLFW_KEY_A)) {
                 System.out.println("A is pressed");
             }
-
             window.refresh();
             inputcontroller.refresh();
-            et = (float) glfwGetTime();
-            dt = et - bt;
-            bt = et;
             running = window.isOpen();
         }
 

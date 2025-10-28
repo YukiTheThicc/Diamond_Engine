@@ -5,6 +5,7 @@ import api.DiaRenderer;
 import core.Camera;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINES;
@@ -36,7 +37,9 @@ public class GLRenderer implements DiaRenderer {
     // METHODS
     public void init() {
         LineRenderer.lineCount = 0;
-
+        GL.createCapabilities();
+        glDisable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     public void drawLines() {
@@ -49,12 +52,19 @@ public class GLRenderer implements DiaRenderer {
 
     @Override
     public void renderFrame(Camera camera) {
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
         LineRenderer.draw(camera, logger);
     }
 
     @Override
     public void addLine(Vector2f from, Vector2f to) {
         LineRenderer.addLine(from, to);
+    }
+
+    @Override
+    public void setViewPort(int width, int height) {
+        glViewport(0, 0, width, height);
     }
 
     private static class LineRenderer {
