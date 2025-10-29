@@ -1,6 +1,7 @@
 package api;
 
 import core.Camera;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 /**
@@ -25,7 +26,7 @@ public interface DiaRenderer {
     /**
      * Render the current frame. Needs a camera
      */
-    public void renderFrame(Camera camera);
+    public void renderFrame(Matrix4f view, Matrix4f projection);
 
     /**
      * Sets the size of the rendering viewport

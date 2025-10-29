@@ -2,7 +2,9 @@ package core.glRenderer;
 
 import api.DiaLogger;
 import api.DiaRenderer;
+import api.DiaWindow;
 import core.Camera;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
@@ -21,7 +23,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  *
  * @author Santiago Barreiro
  */
-public class GLRenderer implements DiaRenderer {
+public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
 
     // CONSTANTS
 
@@ -51,10 +53,10 @@ public class GLRenderer implements DiaRenderer {
     }
 
     @Override
-    public void renderFrame(Camera camera) {
+    public void renderFrame(Matrix4f view, Matrix4f projection) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        LineRenderer.draw(camera, logger);
+        LineRenderer.draw(view, projection, logger);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class GLRenderer implements DiaRenderer {
 
     @Override
     public void setViewPort(int width, int height) {
-        glViewport(0, 0, width, height);
+
     }
 
     private static class LineRenderer {
@@ -129,9 +131,8 @@ public class GLRenderer implements DiaRenderer {
 
         /**
          * Immediate mode rendering of the lines currently buffered. Should be called only once per frame
-         * @param camera core.Camera from which to render
          */
-        public static void draw(Camera camera, DiaLogger logger) {
+        public static void draw(Matrix4f view, Matrix4f projection, DiaLogger logger) {
 
             if (lineCount == 0) return;
 
@@ -158,8 +159,8 @@ public class GLRenderer implements DiaRenderer {
 
             // Use our shader
             shader.use();
-            shader.uploadMat4f("uProjection", camera.getProjMatrix());
-            shader.uploadMat4f("uView", camera.getViewMatrix());
+            shader.uploadMat4f("uProjection", projection);
+            shader.uploadMat4f("uView", view);
             shader.uploadInt("uType", 0);
 
             // Bind the vao
@@ -179,5 +180,10 @@ public class GLRenderer implements DiaRenderer {
             shader.detach();
             lineCount = 0;
         }
+    }
+
+    @Override
+    public void adjustSize(int width, int height) {
+        glViewport(0, 0, width, height);
     }
 }

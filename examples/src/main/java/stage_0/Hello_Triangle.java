@@ -1,11 +1,9 @@
 package stage_0;
 
 import api.*;
-import core.InputController;
-import core.glRenderer.GLRenderer;
-import core.Window;
+import core.GLFWInputController;
+import core.GLFWWindow;
 import org.lwjgl.opengl.GL;
-import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -36,8 +34,8 @@ public class Hello_Triangle {
 
     public static void main(String[] args) {
 
-        DiaWindow window = Window.get();
-        window.init(800, 600, new InputController());
+        DiaWindow window = GLFWWindow.get();
+        window.init(800, 600);
 
         GL.createCapabilities();
         glDisable(GL_BLEND);

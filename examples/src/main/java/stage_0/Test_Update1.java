@@ -2,8 +2,7 @@ package stage_0;
 
 import api.*;
 import assets.Texture;
-import core.Window;
-import core.InputController;
+import core.GLFWWindow;
 import core.glRenderer.*;
 import org.lwjgl.opengl.GL;
 import utils.Logger;
@@ -77,10 +76,8 @@ public class Test_Update1 {
 
     public static void main(String[] args) {
 
-
-        InputController inputcontroller = new InputController();
-        DiaWindow window = Window.get();
-        window.init(800, 600, inputcontroller);
+        DiaWindow window = GLFWWindow.get();
+        window.init(800, 600);
 
         GL.createCapabilities();
         glDisable(GL_BLEND);
@@ -94,6 +91,15 @@ public class Test_Update1 {
         String exampleTexture = System.getProperty("user.dir") + "\\examples\\res\\top.png";
         System.out.println("Attempting to load example texture from = " + exampleTexture + "...");
         Texture texture = assetLoader.loadTexture(exampleTexture);
+
+        // Add resize listener for the window to adjust viewport
+        window.addResizeObserver(new DiaWindow.ResizeObserver() {
+            @Override
+            public void adjustSize(int width, int height) {
+                glViewport(0, 0, width, height);
+            }
+        });
+
 
         boolean running = true;
         while (running) {
@@ -115,7 +121,6 @@ public class Test_Update1 {
             textureShader.detach();
 
             window.refresh();
-            inputcontroller.refresh();
             running = window.isOpen();
         }
 

@@ -1,7 +1,5 @@
 package api;
 
-import core.InputController;
-
 /**
  * DiaWindow
  * Main engine Window API.
@@ -10,7 +8,7 @@ import core.InputController;
 public interface DiaWindow {
 
     public interface ResizeObserver {
-        public void adjustSize();
+        public void adjustSize(int width, int height);
     }
 
     /**
@@ -18,9 +16,14 @@ public interface DiaWindow {
      * including callbacks, window properties, etc.
      * @param width Width of the window
      * @param height Height of the window
-     * @param inputController Input controller
      */
-    public void init(int width, int height, InputController inputController);
+    public void init(int width, int height);
+
+    /**
+     * Returns the aspect ratio of the window
+     * @return Float representing the aspect ratio of the window
+     */
+    public float getAspectRatio();
 
     /**
      * Polls the input events triggered within the window

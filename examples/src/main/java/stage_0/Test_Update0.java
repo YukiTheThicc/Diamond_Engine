@@ -3,11 +3,14 @@ package stage_0;
 import api.DiaRenderer;
 import api.DiaWindow;
 import core.Camera;
-import core.InputController;
-import core.Window;
+import core.GLFWInputController;
+import core.GLFWWindow;
 import core.glRenderer.GLRenderer;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import utils.Logger;
+
+import static org.lwjgl.opengl.GL11.glViewport;
 
 /**
  * Test_Version 0
@@ -29,11 +32,19 @@ public class Test_Update0 {
     // METHODS
     public static void main(String[] args) {
 
-        DiaWindow window = Window.get();
-        window.init(800, 600, new InputController());
-        Camera camera = new Camera();
+        DiaWindow window = GLFWWindow.get();
+        window.init(800, 600);
         DiaRenderer renderer = new GLRenderer(new Logger());
         renderer.init();
+
+        // Add resize listener for the window to adjust viewport
+        window.addResizeObserver(new DiaWindow.ResizeObserver() {
+            @Override
+            public void adjustSize(int width, int height) {
+                glViewport(0, 0, width, height);
+            }
+        });
+
 
         while (window.isOpen()) {
             window.pollEvents();
@@ -43,7 +54,7 @@ public class Test_Update0 {
             renderer.addLine(new Vector2f(4f, 3f), new Vector2f(4,0f));
             renderer.addLine(new Vector2f(4f, 0f), new Vector2f(0f,0f));
             renderer.addLine(new Vector2f(0f, 0f), new Vector2f(4f,3f));
-            renderer.renderFrame(camera);
+            renderer.renderFrame(new Matrix4f().identity(), new Matrix4f().identity());
             window.refresh();
         }
         window.close();

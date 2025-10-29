@@ -37,7 +37,7 @@ public class GLAssetLoader implements DiaAssetLoader {
         IntBuffer channels = BufferUtils.createIntBuffer(1);
 
         // Load bytes from origin path
-        stbi_set_flip_vertically_on_load(true);
+        stbi_set_flip_vertically_on_load(false);
         ByteBuffer bytes = stbi_load(from, x, y, channels, 0);
 
         if (bytes != null) {

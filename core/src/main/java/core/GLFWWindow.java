@@ -1,11 +1,12 @@
 package core;
 
-import api.DiaRenderer;
 import api.DiaWindow;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.opengl.GL;
+
+import java.awt.*;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,27 +20,27 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  *
  * @author Santiago Barreiro
  */
-public class Window implements DiaWindow {
+public class GLFWWindow implements DiaWindow {
 
     // CONSTANTS
 
     // ATTRIBUTES
     private String title;
     private IntBuffer posX, posY;
-    private long glfwWindow;                    // GL core.Window address
-    private static int width, height;
-    private static InputController inputController;
-    private static Window window = null;        // Unique window instance
+    private long glfwWindow;                        // GL core.Window address
+    private int width, height;
+    private static GLFWWindow window = null;        // Unique window instance
+    private ArrayList<ResizeObserver> resizeObservers = new ArrayList<>();
 
     // CONSTRUCTORS
-    private Window() {
+    private GLFWWindow() {
         width = 800;
         height = 600;
         stackPush();
-        this.posX = stackCallocInt(1);
+        posX = stackCallocInt(1);
         stackPush();
-        this.posY = stackCallocInt(1);
-        this.title = "DiamondEngine v0.0.0.1";
+        posY = stackCallocInt(1);
+        title = "DiamondEngine v0.0.0.1";
         stackPop();
         stackPop();
     }
@@ -56,22 +57,21 @@ public class Window implements DiaWindow {
     // METHODS
     public static DiaWindow get() {
         if (window == null) {
-            window = new Window();
+            window = new GLFWWindow();
         }
         return window;
     }
 
     @Override
-    public void init(int width, int height, InputController inputController) {
-        GLFWErrorCallback.createPrint(System.err).set();
+    public void init(int width, int height) {
 
+        GLFWErrorCallback.createPrint(System.err).set();
         if (!glfwInit()) {
             throw new IllegalStateException("Failed to initialize GLFW");
         }
 
-        Window.width = width;
-        Window.height = height;
-        Window.inputController = inputController;
+        this.width = width;
+        this.height = height;
 
         // Set default window state
         glfwDefaultWindowHints();
@@ -86,14 +86,19 @@ public class Window implements DiaWindow {
         }
 
         // Set up window input callbacks
-        glfwSetKeyCallback(glfwWindow, Window::keyCallback);
-        glfwSetFramebufferSizeCallback(glfwWindow, Window::frameBufferSizeCallback);
+        glfwSetKeyCallback(glfwWindow, this::keyCallback);
+        glfwSetFramebufferSizeCallback(glfwWindow, this::frameBufferSizeCallback);
 
         // Setup context and show window
         glfwMakeContextCurrent(glfwWindow);
         glfwSwapInterval(1);
 
         glfwShowWindow(glfwWindow);
+    }
+
+    @Override
+    public float getAspectRatio() {
+        return (float) width / height;
     }
 
     @Override
@@ -125,19 +130,19 @@ public class Window implements DiaWindow {
 
     @Override
     public void addResizeObserver(ResizeObserver observer) {
-
+        if (observer != null) resizeObservers.add(observer);
     }
 
     @Override
     public void removeResizeObserver(ResizeObserver observer) {
-
+        if (observer != null) resizeObservers.remove(observer);
     }
 
-    private static void frameBufferSizeCallback(long window, int width, int height) {
-
+    private void frameBufferSizeCallback(long window, int width, int height) {
+        for (ResizeObserver observer : resizeObservers) observer.adjustSize(width, height);
     }
 
-    public static void keyCallback(long window, int key, int scancode, int action, int mods) {
-
+    public void keyCallback(long window, int key, int scancode, int action, int mods) {
+        GLFWInputController.registerKey(key, action);
     }
 }
