@@ -1,8 +1,11 @@
 package core;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
+
+import static java.lang.Math.toRadians;
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
 
 /**
  * Camera2D
@@ -15,28 +18,40 @@ public class Camera {
     private Vector3f pos;
     private Vector3f front;
     private Vector3f up;
-    private float zoom, maxZoom, minZoom;
+    private Matrix4f projection;
+    private float fov = 45f;
+    private float zoom;
+    private final float maxZoom;
+    private final float minZoom;
 
     // CONSTRUCTORS
 
     /**
      * Creates a camera on 3D space with a specific location, target and up vectors
-     * @param pos Starting position of the camera
      * @param front Position at which the camera will be pointing at
      * @param up The up vector of the camera
      */
-    public Camera(Vector3f pos, Vector3f front, Vector3f up, float maxZoom, float minZoom) {
-        this.pos = pos;
+    public Camera(Vector3f front, Vector3f up, float fov, float maxZoom, float minZoom) {
+        this.pos = new Vector3f();
         this.front = front;
         this.up = up;
+        this.fov = fov;
         this.maxZoom = maxZoom;
         this.minZoom = minZoom;
         this.zoom = 1f;
     }
 
     // METHODS
+    public Matrix4f getPerspectiveProjection(float aspectRatio, float near, float far) {
+        return new Matrix4f().identity().perspective((float) toRadians(fov) / zoom, aspectRatio, near, far);
+    }
+    
     public Matrix4f getViewMatrix() {
-        return new Matrix4f().lookAt(pos, new Vector3f(pos).add(front), up);
+        Vector3f direction = new Vector3f(pos).add(front);
+        return new Matrix4f().lookAt(
+                pos,
+                direction,
+                up);
     }
 
     public void moveTo(Vector3f destination) {
@@ -44,11 +59,11 @@ public class Camera {
     }
 
     public void move(float displacementX, float displacementY, float displacementZ) {
-        this.pos.add(displacementX, displacementY, displacementZ);
+        pos.add(displacementX, displacementY, displacementZ);
     }
 
     public void moveX(float displacement) {
-        this.pos.x += displacement;
+        pos.add((front.cross(up).mul(displacement)).normalize());
     }
 
     public void moveY(float displacement) {
@@ -56,16 +71,23 @@ public class Camera {
     }
 
     public void moveZ(float displacement) {
-        this.pos.z += displacement;
+        pos = pos.add(front.mul(displacement));
     }
 
-    public void zoomIn(float increase) {
+    public void rotate(float yaw, float pitch, float roll) {
+        float radYaw = (float) toRadians(yaw);
+        float radPitch = (float) toRadians(pitch);
+        float radRoll = (float) toRadians(roll);
+        Vector3f front = new Vector3f();
+        front.x = (float) (cos(radYaw) * cos(radPitch));
+        front.y = (float) sin(radPitch);
+        front.z = (float) (sin(radYaw) * cos(radPitch));
+        this.front = front.normalize();
+    }
+
+    public void zoom(float increase) {
         zoom += increase;
         if (zoom > maxZoom) zoom = maxZoom;
-    }
-
-    public void zoomOut(float decrease) {
-        zoom -= decrease;
         if (zoom < minZoom) zoom = minZoom;
     }
 }

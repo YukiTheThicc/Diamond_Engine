@@ -7,6 +7,7 @@ import core.GLFWWindow;
 import core.GLFWInputController;
 import core.glRenderer.*;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
 import utils.DiaMath;
@@ -16,12 +17,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL20.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL20.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL20.glBindTexture;
-import static org.lwjgl.opengl.GL20.glDrawElements;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
@@ -34,7 +32,14 @@ public class Test_Update2 {
 
     // ATTRIBUTES
     static DiaLogger logger;
+    static DiaWindow window;
     static GLShader textureShader;
+    static Camera camera;
+    static float cameraSpeed = 2.5f;
+    static float cameraYaw = -90f;
+    static float cameraPitch = 0f;
+    static float cursorSensitivity = 0.1f;
+    static boolean captureMouse = true;
 
     static final String vertexShaderTextureSource =
             "#version 330 core\n" +
@@ -62,8 +67,9 @@ public class Test_Update2 {
     public static void main(String[] args) {
 
         logger = new Logger();
-        DiaWindow window = GLFWWindow.get();
+        window = GLFWWindow.get();
         window.init(800, 600);
+        GLFWInputController.init(800, 600);
 
         GL.createCapabilities();
         glEnable(GL_DEPTH_TEST);
@@ -89,12 +95,12 @@ public class Test_Update2 {
         boolean running = true;
         float rotationZ = 0f;
         float rotationX = 0f;
-        Camera camera = new Camera(
-                new Vector3f(0f, 0f, 3f),
+        camera = new Camera(
                 new Vector3f(0f, 0f, -1f),
                 new Vector3f(0f, 1f, 0f),
-                10f,
-                0.5f
+                90f,
+                4f,
+                0.75f
         );
 
         float bt = (float) glfwGetTime();
@@ -112,27 +118,15 @@ public class Test_Update2 {
             new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
             new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f))
         };
-
         float cRot = 0f;
-        float cameraSpeed = 2.5f;
+
         while (running) {
             window.pollEvents();
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // Cursor focus control
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_LEFT_ALT)) camera.moveX(-cameraSpeed * dt);
-
-            // Camera movement
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_D)) camera.moveX(-cameraSpeed * dt);
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_A)) camera.moveX(cameraSpeed * dt);
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_W)) camera.moveZ(-cameraSpeed * dt);
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_S)) camera.moveZ(cameraSpeed * dt);
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_SPACE)) camera.moveY(-cameraSpeed * dt);
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) camera.moveY(cameraSpeed * dt);
-
-            Matrix4f projection = new Matrix4f().identity();
-            projection = projection.perspective((float) Math.toRadians(-90f), window.getAspectRatio(), 0.1f, 100f);
+            processControls(dt);
+            Matrix4f projection = camera.getPerspectiveProjection(window.getAspectRatio(), 0.1f, 100f);
             Matrix4f view = camera.getViewMatrix();
             cRot += dt;
             glBindTexture(GL_TEXTURE_2D, texture.getId());
@@ -147,12 +141,11 @@ public class Test_Update2 {
                     model.rotate(rotationZ, 0f,0f,1f);
                 }
                 if (i % 3 == 1) {
-                    model.rotate(cRot * (float) i /10, 1f,0f,0f);
-                    model.rotate(cRot * (float) i /10, 0f,0f,1f);
+                    model.rotate(cRot * (float) i / 9, 1f,0f,0f);
+                    model.rotate(cRot * (float) i / 9, 0f,0f,1f);
                 }
                 textureShader.uploadMat4f("model", model);
                 glBindVertexArray(texturedVAO);
-                //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
             textureShader.detach();
@@ -167,6 +160,32 @@ public class Test_Update2 {
         }
 
         window.close();
+    }
+
+    public static void processControls(float dt) {
+        // Cursor capture control
+        if (GLFWInputController.keyBeginPress(GLFW_KEY_LEFT_ALT)) {
+            captureMouse = !captureMouse;
+            window.captureCursor(captureMouse);
+        }
+
+        // Camera movement
+        if (GLFWInputController.isKeyPressed(GLFW_KEY_D)) camera.moveX(cameraSpeed * dt);
+        if (GLFWInputController.isKeyPressed(GLFW_KEY_A)) camera.moveX(-cameraSpeed * dt);
+        if (GLFWInputController.isKeyPressed(GLFW_KEY_W)) camera.moveZ(cameraSpeed * dt);
+        if (GLFWInputController.isKeyPressed(GLFW_KEY_S)) camera.moveZ(-cameraSpeed * dt);
+        if (GLFWInputController.isKeyPressed(GLFW_KEY_SPACE)) camera.moveY(-cameraSpeed * dt);
+        if (GLFWInputController.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) camera.moveY(cameraSpeed * dt);
+
+        // Cursor controls
+        Vector2f cursorOffset = GLFWInputController.getCursorOffset();
+        cameraYaw += cursorOffset.x * cursorSensitivity;
+        cameraPitch += cursorOffset.y * cursorSensitivity;
+        if(cameraPitch > 89.0f) cameraPitch = 89.0f;
+        if(cameraPitch < -89.0f) cameraPitch = -89.0f;
+        camera.rotate(cameraYaw, cameraPitch, 0f);
+        camera.zoom(GLFWInputController.getScroll()/10);
+
     }
 
     private static int setupTexturedExample() {
@@ -230,17 +249,11 @@ public class Test_Update2 {
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
-//        glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * Float.BYTES, 3 * Float.BYTES);
-//        glEnableVertexAttribArray(1);
-//        glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * Float.BYTES, 6 * Float.BYTES);
-//        glEnableVertexAttribArray(2);
         return VAO;
     }
 }

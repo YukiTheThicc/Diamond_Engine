@@ -87,6 +87,8 @@ public class GLFWWindow implements DiaWindow {
 
         // Set up window input callbacks
         glfwSetKeyCallback(glfwWindow, this::keyCallback);
+        glfwSetCursorPosCallback(glfwWindow, this::cursorCallback);
+        glfwSetScrollCallback(glfwWindow, this::scrollCallback);
         glfwSetFramebufferSizeCallback(glfwWindow, this::frameBufferSizeCallback);
 
         // Setup context and show window
@@ -138,6 +140,13 @@ public class GLFWWindow implements DiaWindow {
         if (observer != null) resizeObservers.remove(observer);
     }
 
+    @Override
+    public void captureCursor(boolean capture) {
+        if (capture) glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        else glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    // ========================= WINDOW CALLBACKS =================================
     private void frameBufferSizeCallback(long window, int width, int height) {
         for (ResizeObserver observer : resizeObservers) observer.adjustSize(width, height);
     }
@@ -146,7 +155,11 @@ public class GLFWWindow implements DiaWindow {
         GLFWInputController.registerKey(key, action);
     }
 
-    public void mouseCallback(long window, int key, int scancode, int action, int mods) {
-        GLFWInputController.registerKey(key, action);
+    public void cursorCallback(long window, double x, double y) {
+        GLFWInputController.cursorPosCallback(x, y);
+    }
+
+    private void scrollCallback(long window, double x, double y) {
+        GLFWInputController.scrollCallback(x, y);
     }
 }

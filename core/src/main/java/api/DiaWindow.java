@@ -56,4 +56,10 @@ public interface DiaWindow {
      * Removes a ResizeListener
      */
     public void removeResizeObserver(ResizeObserver observer);
+
+    /**
+     * Sets the window to capture or not capture the cursor
+     * @param capture true for the window to capture the cursor, false for it to not be captured
+     */
+    public void captureCursor(boolean capture);
 }
