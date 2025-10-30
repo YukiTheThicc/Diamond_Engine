@@ -145,4 +145,8 @@ public class GLFWWindow implements DiaWindow {
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
         GLFWInputController.registerKey(key, action);
     }
+
+    public void mouseCallback(long window, int key, int scancode, int action, int mods) {
+        GLFWInputController.registerKey(key, action);
+    }
 }

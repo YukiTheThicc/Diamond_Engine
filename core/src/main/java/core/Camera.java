@@ -15,6 +15,7 @@ public class Camera {
     private Vector3f pos;
     private Vector3f front;
     private Vector3f up;
+    private float zoom, maxZoom, minZoom;
 
     // CONSTRUCTORS
 
@@ -24,10 +25,13 @@ public class Camera {
      * @param front Position at which the camera will be pointing at
      * @param up The up vector of the camera
      */
-    public Camera(Vector3f pos, Vector3f front, Vector3f up) {
+    public Camera(Vector3f pos, Vector3f front, Vector3f up, float maxZoom, float minZoom) {
         this.pos = pos;
         this.front = front;
         this.up = up;
+        this.maxZoom = maxZoom;
+        this.minZoom = minZoom;
+        this.zoom = 1f;
     }
 
     // METHODS
@@ -53,5 +57,15 @@ public class Camera {
 
     public void moveZ(float displacement) {
         this.pos.z += displacement;
+    }
+
+    public void zoomIn(float increase) {
+        zoom += increase;
+        if (zoom > maxZoom) zoom = maxZoom;
+    }
+
+    public void zoomOut(float decrease) {
+        zoom -= decrease;
+        if (zoom < minZoom) zoom = minZoom;
     }
 }

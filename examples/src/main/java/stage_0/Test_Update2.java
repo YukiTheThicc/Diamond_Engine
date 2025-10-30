@@ -92,7 +92,9 @@ public class Test_Update2 {
         Camera camera = new Camera(
                 new Vector3f(0f, 0f, 3f),
                 new Vector3f(0f, 0f, -1f),
-                new Vector3f(0f, 1f, 0f)
+                new Vector3f(0f, 1f, 0f),
+                10f,
+                0.5f
         );
 
         float bt = (float) glfwGetTime();
@@ -114,39 +116,24 @@ public class Test_Update2 {
         float cRot = 0f;
         float cameraSpeed = 2.5f;
         while (running) {
-
             window.pollEvents();
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_A)) {
-                rotationZ += dt;
-                System.out.println("A is pressed: " + rotationZ);
-            }
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_D)) {
-                rotationZ -= dt;
-                System.out.println("D is pressed: " + rotationZ);
-            }
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_W)) {
-                rotationX += dt;
-                System.out.println("W is pressed: " + rotationX);
-            }
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_S)) {
-                rotationX -= dt;
-                System.out.println("S is pressed: " + rotationX);
-            }
+            // Cursor focus control
+            if (GLFWInputController.isKeyPressed(GLFW_KEY_LEFT_ALT)) camera.moveX(-cameraSpeed * dt);
 
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_RIGHT)) camera.moveX(cameraSpeed * dt);
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_LEFT)) camera.moveX(-cameraSpeed * dt);
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_UP)) camera.moveZ(cameraSpeed * dt);
-            if (GLFWInputController.isKeyPressed(GLFW_KEY_DOWN)) camera.moveZ(-cameraSpeed * dt);
+            // Camera movement
+            if (GLFWInputController.isKeyPressed(GLFW_KEY_D)) camera.moveX(-cameraSpeed * dt);
+            if (GLFWInputController.isKeyPressed(GLFW_KEY_A)) camera.moveX(cameraSpeed * dt);
+            if (GLFWInputController.isKeyPressed(GLFW_KEY_W)) camera.moveZ(-cameraSpeed * dt);
+            if (GLFWInputController.isKeyPressed(GLFW_KEY_S)) camera.moveZ(cameraSpeed * dt);
+            if (GLFWInputController.isKeyPressed(GLFW_KEY_SPACE)) camera.moveY(-cameraSpeed * dt);
+            if (GLFWInputController.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) camera.moveY(cameraSpeed * dt);
 
             Matrix4f projection = new Matrix4f().identity();
             projection = projection.perspective((float) Math.toRadians(-90f), window.getAspectRatio(), 0.1f, 100f);
             Matrix4f view = camera.getViewMatrix();
-
-            //model = model.rotate(rotationZ, new Vector3f(0f, 0f, 1f));
-            //model = model.rotate(rotationX, new Vector3f(1f, 0f, 0f));
             cRot += dt;
             glBindTexture(GL_TEXTURE_2D, texture.getId());
             textureShader.use();

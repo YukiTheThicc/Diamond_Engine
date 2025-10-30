@@ -40,6 +40,8 @@ public class GLFWInputController {
         }
     }
 
+    public static void
+
 //    public static boolean isKeyPressed(int keyCode) {
 //        return keyPressed.getFlag(keyCode);
 //    }
