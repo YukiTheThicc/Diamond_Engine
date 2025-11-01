@@ -1,6 +1,7 @@
 package core.glRenderer;
 
 import api.DiaLogger;
+import assets.Shader;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
@@ -13,7 +14,7 @@ import static org.lwjgl.opengl.GL20.*;
  *
  * @author: Santiago Barreiro
  */
-public class GLShader {
+public class GLShader implements Shader {
 
     // ATTRIBUTES
     private int programId;
@@ -38,6 +39,7 @@ public class GLShader {
     /**
      * Compile the shader. If compilation fails at some point, the program id will be set to -1.
      */
+    @Override
     public void compile(DiaLogger logger) {
 
         int vertexId, fragmentId;

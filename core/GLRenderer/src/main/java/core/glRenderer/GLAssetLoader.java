@@ -5,8 +5,11 @@ import api.DiaLogger;
 import assets.Texture;
 import org.lwjgl.BufferUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBImage.*;
@@ -27,6 +30,7 @@ public class GLAssetLoader implements DiaAssetLoader {
     }
 
     // METHODS
+    @Override
     public Texture loadTexture(String from) {
 
         Texture texture = null;
@@ -68,5 +72,69 @@ public class GLAssetLoader implements DiaAssetLoader {
             stbi_image_free(bytes);
         }
         return texture;
+    }
+
+    /**
+     * Creates a shader from a single source. Expects to types of shader in one file, each being headed by the string
+     * "#type vertex" for the vertex shader and "#type fragment" for the fragment shader
+     * @param source Sin
+     * @return New shader from the provided source. Non compiled
+     */
+    @Override
+    public GLShader loadShader(String source) {
+        GLShader shader = null;
+        try {
+            String sourceString = new String(Files.readAllBytes(Paths.get(source)));
+            String[] sources = sourceString.split("(#type)( )+([a-zA-Z])+");
+
+            // Find the first pattern after #type
+            int index = sourceString.indexOf("#type") + 6;
+            int eol = sourceString.indexOf("\r\n", index);
+            String firstPattern = sourceString.substring(index, eol).trim();
+            // Find the second pattern after #type
+            index = sourceString.indexOf("#type", eol) + 6;
+            eol = sourceString.indexOf("\r\n", index);
+            String secondPattern = sourceString.substring(index, eol).trim();
+
+            String vs = "", fs = "";
+            if (firstPattern.equals("vertex")) {
+                vs = sources[1];
+            } else if (firstPattern.equals("fragment")) {
+                fs = sources[1];
+            } else {
+                throw new IOException("Unexpected token '" + firstPattern + "'");
+            }
+
+            if (secondPattern.equals("vertex")) {
+                vs = sources[2];
+            } else if (secondPattern.equals("fragment")) {
+                fs = sources[2];
+            } else {
+                throw new IOException("Unexpected token '" + secondPattern + "'");
+            }
+            shader = new GLShader(vs, fs);
+        } catch (IOException e) {
+            logger.log(GLAssetLoader.class, "Error while loading shader from \"" + source + "\": " + e.getMessage(), DiaLogger.levels.ERROR);
+        }
+        return shader;
+    }
+
+    /**
+     * Loads a shader from 2 different sources, one for the vertex shader and one for the fragment shader
+     * @param vsSource Source path for the vertex shader
+     * @param fsSource Source path for the fragment shader
+     * @return New shader from the provided sources. Non compiled
+     */
+    @Override
+    public GLShader loadShader(String vsSource, String fsSource) {
+        GLShader shader = null;
+        try {
+            String vsSourceString = new String(Files.readAllBytes(Paths.get(vsSource)));
+            String fsSourceString = new String(Files.readAllBytes(Paths.get(fsSource)));
+            shader = new GLShader(vsSourceString, fsSourceString);
+        } catch (IOException e) {
+            logger.log(GLAssetLoader.class, "Error while loading shader from \"" + vsSource + "\" and \"" + vsSource + "\": " + e.getMessage(), DiaLogger.levels.ERROR);
+        }
+        return shader;
     }
 }

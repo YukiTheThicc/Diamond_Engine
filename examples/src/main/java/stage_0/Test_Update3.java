@@ -28,11 +28,12 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  *
  * @author: Santiago Barreiro
  */
-public class Test_Update2 {
+public class Test_Update3 {
 
     // ATTRIBUTES
     static DiaLogger logger;
     static DiaWindow window;
+    static DiaAssetLoader assetLoader;
     static GLShader textureShader;
     static Camera camera;
     static float cameraSpeed = 2.5f;
@@ -40,29 +41,6 @@ public class Test_Update2 {
     static float cameraPitch = 0f;
     static float cursorSensitivity = 0.1f;
     static boolean captureMouse = true;
-
-    static final String vertexShaderTextureSource =
-            "#version 330 core\n" +
-                    "layout (location = 0) in vec3 aPos;\n" +
-                    "layout (location = 1) in vec2 aTexCoords;\n" +
-                    "out vec2 texCoords;\n" +
-                    "uniform mat4 model;\n" +
-                    "uniform mat4 view;\n" +
-                    "uniform mat4 projection;\n" +
-                    "void main()\n" +
-                    "{\n" +
-                    "   gl_Position = projection * view * model * vec4(aPos, 1.0);\n" +
-                    "   texCoords = vec2(aTexCoords.x, aTexCoords.y);\n" +
-                    "}\0";
-    static final String fragmentShaderTextureSource =
-            "#version 330 core\n" +
-                    "in vec2 texCoords;\n" +
-                    "out vec4 FragColor;\n" +
-                    "uniform sampler2D sampledTexture;\n" +
-                    "void main()\n" +
-                    "{\n" +
-                    "   FragColor = texture(sampledTexture, texCoords);\n" +
-                    "}\n\0";
 
     public static void main(String[] args) {
 
@@ -76,7 +54,7 @@ public class Test_Update2 {
         glDisable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        DiaAssetLoader assetLoader = new GLAssetLoader(logger);
+        assetLoader = new GLAssetLoader(logger);
         int texturedVAO = setupTexturedExample();
 
         String exampleTexture = System.getProperty("user.dir") + "\\examples\\res\\top.png";
@@ -107,16 +85,16 @@ public class Test_Update2 {
         float et = (float) glfwGetTime();
         float dt = 0f;
         Vector3f[] positions = {
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-            new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f))
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f))
         };
         float cRot = 0f;
 
@@ -191,7 +169,10 @@ public class Test_Update2 {
     }
 
     private static int setupTexturedExample() {
-        textureShader = new GLShader(vertexShaderTextureSource, fragmentShaderTextureSource);
+
+        String vs = System.getProperty("user.dir") + "\\examples\\src\\main\\resources\\texturedVertex.glsl";
+        String fs = System.getProperty("user.dir") + "\\examples\\src\\main\\resources\\texturedFragment.glsl";
+        textureShader = (GLShader) assetLoader.loadShader(vs, fs);
         textureShader.compile(logger);
 
         float[] vertices = {

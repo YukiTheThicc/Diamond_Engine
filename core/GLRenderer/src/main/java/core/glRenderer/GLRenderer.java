@@ -129,6 +129,30 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
             lineCount++;
         }
 
+        public static void addLine(Vector3f from, Vector3f to) {
+            addLine(from, to, new Vector3f(1, 0, 1));
+        }
+
+        public static void addLine(Vector3f from, Vector3f to, Vector3f color) {
+
+            // First vertex of the line
+            vertexArray[lineCount * ATTR_PER_LINE] = from.x;
+            vertexArray[lineCount * ATTR_PER_LINE + 1] = from.y;
+            vertexArray[lineCount * ATTR_PER_LINE + 2] = from.z;
+            vertexArray[lineCount * ATTR_PER_LINE + 3] = color.x;
+            vertexArray[lineCount * ATTR_PER_LINE + 4] = color.y;
+            vertexArray[lineCount * ATTR_PER_LINE + 5] = color.z;
+
+            // Second vertex for the line
+            vertexArray[lineCount * ATTR_PER_LINE + 6] = to.x;
+            vertexArray[lineCount * ATTR_PER_LINE + 7] = to.y;
+            vertexArray[lineCount * ATTR_PER_LINE + 8] = to.z;
+            vertexArray[lineCount * ATTR_PER_LINE + 9] = color.x;
+            vertexArray[lineCount * ATTR_PER_LINE + 10] = color.y;
+            vertexArray[lineCount * ATTR_PER_LINE + 11] = color.z;
+            lineCount++;
+        }
+
         /**
          * Immediate mode rendering of the lines currently buffered. Should be called only once per frame
          */

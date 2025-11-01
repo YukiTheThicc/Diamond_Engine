@@ -18,7 +18,6 @@ public class Camera {
     private Vector3f pos;
     private Vector3f front;
     private Vector3f up;
-    private Matrix4f projection;
     private float fov = 45f;
     private float zoom;
     private final float maxZoom;
@@ -63,11 +62,12 @@ public class Camera {
     }
 
     public void moveX(float displacement) {
-        pos.add((front.cross(up).mul(displacement)).normalize());
+        Vector3f movement = (front.cross(up)).normalize().mul(displacement);
+        pos = pos.add(movement);
     }
 
     public void moveY(float displacement) {
-        this.pos.y += displacement;
+        pos = pos.add(new Vector3f(0f, displacement, 0f));
     }
 
     public void moveZ(float displacement) {
