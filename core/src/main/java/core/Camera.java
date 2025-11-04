@@ -41,10 +41,30 @@ public class Camera {
     }
 
     // METHODS
+
+    /**
+     * Returns the position of the camera
+     * @return New vector containing the cameras current position
+     */
+    public Vector3f getPos() {
+        return new Vector3f(pos);
+    }
+
+    /**
+     * Calculates and returns the perspective matrix as calculated from this camera fov and zoom levels
+     * @param aspectRatio Aspect ratio for the final projection
+     * @param near Distance of the near plane
+     * @param far Distance of the far plane
+     * @return Projection matrix for this camera, taking into account its fov and zoom
+     */
     public Matrix4f getPerspectiveProjection(float aspectRatio, float near, float far) {
         return new Matrix4f().identity().perspective((float) toRadians(fov) / zoom, aspectRatio, near, far);
     }
-    
+
+    /**
+     * Calculates and returns the view matrix defined by the camera
+     * @return View matrix for this camera
+     */
     public Matrix4f getViewMatrix() {
         Vector3f direction = new Vector3f(pos).add(front);
         return new Matrix4f().lookAt(
@@ -53,27 +73,46 @@ public class Camera {
                 up);
     }
 
+    /**
+     * Sets the camera position to the one provided
+     * @param destination New position of the camera
+     */
     public void moveTo(Vector3f destination) {
-        this.pos = destination;
+        pos.x = destination.x;
+        pos.y = destination.y;
+        pos.z = destination.z;
     }
 
-    public void move(float displacementX, float displacementY, float displacementZ) {
-        pos.add(displacementX, displacementY, displacementZ);
-    }
-
+    /**
+     * Moves the camera in the X axis taking into account its front vector
+     * @param displacement Displacement of the camera
+     */
     public void moveX(float displacement) {
-        Vector3f movement = (front.cross(up)).normalize().mul(displacement);
-        pos = pos.add(movement);
+        pos.add((front.cross(up)).normalize().mul(displacement));
     }
 
+    /**
+     * Moves the camera in the Y axis taking into account its front vector
+     * @param displacement Displacement of the camera
+     */
     public void moveY(float displacement) {
-        pos = pos.add(new Vector3f(0f, displacement, 0f));
+        pos.add(new Vector3f(0f, displacement, 0f));
     }
 
+    /**
+     * Moves the camera in the Z axis taking into account its front vector
+     * @param displacement Displacement of the camera
+     */
     public void moveZ(float displacement) {
-        pos = pos.add(front.mul(displacement));
+        pos.add(front.mul(displacement));
     }
 
+    /**
+     * Rotates the camera in all 3 axis
+     * @param yaw New angle for the yaw in degrees
+     * @param pitch New angle for the pitch in degrees
+     * @param roll New angle of the roll in degrees (non-functional yet)
+     */
     public void rotate(float yaw, float pitch, float roll) {
         float radYaw = (float) toRadians(yaw);
         float radPitch = (float) toRadians(pitch);
@@ -85,6 +124,10 @@ public class Camera {
         this.front = front.normalize();
     }
 
+    /**
+     * Zooms the camera by a given amount
+     * @param increase Amount to increase the zoom by
+     */
     public void zoom(float increase) {
         zoom += increase;
         if (zoom > maxZoom) zoom = maxZoom;

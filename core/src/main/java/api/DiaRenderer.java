@@ -3,6 +3,7 @@ package api;
 import core.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 /**
  * DiaRenderer
@@ -22,6 +23,9 @@ public interface DiaRenderer {
      * @param to Second vertex of the line
      */
     public void addLine(Vector2f from, Vector2f to);
+    public void addLine(Vector2f from, Vector2f to, Vector3f color);
+    public void addLine(Vector3f from, Vector3f to);
+    public void addLine(Vector3f from, Vector3f to, Vector3f color);
 
     /**
      * Render the current frame. Needs a camera

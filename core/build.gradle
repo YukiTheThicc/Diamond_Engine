@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "diamond.core"
+group = "core"
 version = "unspecified"
 
 repositories {
@@ -14,9 +14,9 @@ project.ext.lwjglNatives = "natives-windows"
 project.ext.jomlVersion = "1.10.5"
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation project(':core:alma')
     // JOML
     implementation "org.joml:joml:${jomlVersion}"
 

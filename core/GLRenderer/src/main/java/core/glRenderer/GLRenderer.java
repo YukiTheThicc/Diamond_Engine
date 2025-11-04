@@ -1,9 +1,6 @@
 package core.glRenderer;
 
-import api.DiaLogger;
-import api.DiaRenderer;
-import api.DiaWindow;
-import core.Camera;
+import api.*;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -52,16 +49,37 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
         if (drawLines) drawLines = false;
     }
 
+
+    /**
+     * Renders the current frame
+     * @param view View matrix to render the frame from
+     * @param projection Projection matrix to use for rendering
+     */
     @Override
     public void renderFrame(Matrix4f view, Matrix4f projection) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         LineRenderer.draw(view, projection, logger);
     }
 
     @Override
     public void addLine(Vector2f from, Vector2f to) {
         LineRenderer.addLine(from, to);
+    }
+
+    @Override
+    public void addLine(Vector2f from, Vector2f to, Vector3f color) {
+        LineRenderer.addLine(from, to, color);
+    }
+
+    @Override
+    public void addLine(Vector3f from, Vector3f to) {
+        LineRenderer.addLine(from, to);
+    }
+
+    @Override
+    public void addLine(Vector3f from, Vector3f to, Vector3f color) {
+        LineRenderer.addLine(from, to, color);
     }
 
     @Override
@@ -82,22 +100,25 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
                         "uniform mat4 uView;\n" +
                         "uniform int uType;\n" +
                         "out vec3 fragColor;\n" +
+                        "out vec3 fragPos;\n" +
                         "out int type;\n" +
                         "void main() {\n" +
                         "    fragColor = attrColor;\n" +
                         "    type = uType;\n" +
                         "    gl_Position = uProjection * uView * vec4(attrPos, 1.0);\n" +
+                        "    fragPos = vec3(gl_Position.x,gl_Position.y,gl_Position.z);\n" +
                         "}";
         private static final String FRAGMENT =
                 "#version 330 core\n" +
                         "in vec3 fragColor;\n" +
+                        "in vec3 fragPos;\n" +
                         "out vec4 color;\n" +
                         "void main() {\n" +
                         "    color = vec4(fragColor, 1);\n" +
                         "}";
 
         // ATTRIBUTES
-        private static final GLShader shader = new GLShader(VERTEX, FRAGMENT);
+        private static final GLShader lineShader = new GLShader(VERTEX, FRAGMENT);
         private static final float[] vertexArray = new float[MAX_LINES * 6 * 2];
         private static int vaoID;
         private static int vboID;
@@ -162,7 +183,7 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
 
             // Lazily compile the shaders in case they weren't compiled before and bind buffers
             if (!started) {
-                shader.compile(logger);
+                lineShader.compile(logger);
                 vaoID = glGenVertexArrays();
                 glBindVertexArray(vaoID);
 
@@ -182,10 +203,10 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
             glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
 
             // Use our shader
-            shader.use();
-            shader.uploadMat4f("uProjection", projection);
-            shader.uploadMat4f("uView", view);
-            shader.uploadInt("uType", 0);
+            lineShader.use();
+            lineShader.uploadMat4f("uProjection", projection);
+            lineShader.uploadMat4f("uView", view);
+            lineShader.uploadInt("uType", 0);
 
             // Bind the vao
             glBindVertexArray(vaoID);
@@ -193,6 +214,7 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
             glEnableVertexAttribArray(1);
 
             // Draw the batch
+            glEnable(GL_BLEND);
             glDrawArrays(GL_LINES, 0, lineCount * 2);
 
             // Disable Location
@@ -201,7 +223,7 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
             glBindVertexArray(0);
 
             // Unbind shader, and reset line index to O
-            shader.detach();
+            lineShader.detach();
             lineCount = 0;
         }
     }

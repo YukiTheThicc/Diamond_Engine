@@ -30,15 +30,18 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  */
 public class Test_Update3 {
 
+    static final int NUM_GRID_LINES = 50;
+
     // ATTRIBUTES
     static DiaLogger logger;
     static DiaWindow window;
     static DiaAssetLoader assetLoader;
+    static GLRenderer glRenderer;
     static GLShader textureShader;
     static Camera camera;
     static float cameraSpeed = 2.5f;
-    static float cameraYaw = -90f;
-    static float cameraPitch = 0f;
+    static float cameraYaw = 45f;
+    static float cameraPitch = -30f;
     static float cursorSensitivity = 0.1f;
     static boolean captureMouse = true;
 
@@ -47,6 +50,9 @@ public class Test_Update3 {
         logger = new Logger();
         window = GLFWWindow.get();
         window.init(800, 600);
+        assetLoader = new GLAssetLoader(logger);
+        glRenderer = new GLRenderer(logger);
+        glRenderer.init();
         GLFWInputController.init(800, 600);
 
         GL.createCapabilities();
@@ -54,7 +60,7 @@ public class Test_Update3 {
         glDisable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        assetLoader = new GLAssetLoader(logger);
+
         int texturedVAO = setupTexturedExample();
 
         String exampleTexture = System.getProperty("user.dir") + "\\examples\\res\\top.png";
@@ -80,32 +86,37 @@ public class Test_Update3 {
                 4f,
                 0.75f
         );
+        camera.moveTo(new Vector3f(-5f,3f, -5f));
+        camera.rotate(45f, -30f, 0f);
 
         float bt = (float) glfwGetTime();
         float et = (float) glfwGetTime();
         float dt = 0f;
         Vector3f[] positions = {
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
-                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f))
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
+                new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f))
         };
         float cRot = 0f;
 
         while (running) {
-            window.pollEvents();
-            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            window.pollEvents();
             processControls(dt);
-            Matrix4f projection = camera.getPerspectiveProjection(window.getAspectRatio(), 0.1f, 100f);
+            Matrix4f projection = camera.getPerspectiveProjection(window.getAspectRatio(), 0.1f, 1000f);
             Matrix4f view = camera.getViewMatrix();
+
+            renderGrid();
+            glRenderer.renderFrame(view, projection);
+
+
             cRot += dt;
             glBindTexture(GL_TEXTURE_2D, texture.getId());
             textureShader.use();
@@ -140,7 +151,24 @@ public class Test_Update3 {
         window.close();
     }
 
-    public static void processControls(float dt) {
+    private static void renderGrid() {
+        Vector3f gridColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        Vector3f originColor = new Vector3f(0.9f, 0.9f, 0.9f);
+        glRenderer.addLine(new Vector3f(-1000,0,0), new Vector3f(1000, 0, 0), originColor);
+        glRenderer.addLine(new Vector3f(0,-1000,0), new Vector3f(0, 1000, 0), originColor);
+        glRenderer.addLine(new Vector3f(0,0,-1000), new Vector3f(0, 0, 1000), originColor);
+
+        Vector3f cameraPos = camera.getPos();
+        int half = NUM_GRID_LINES / 2;
+        for (int i = 0; i < NUM_GRID_LINES; i++) {
+            if (-half + i != 0) {
+                glRenderer.addLine(new Vector3f(-half,0, -half + i), new Vector3f(half, 0, -half + i), gridColor);
+                glRenderer.addLine(new Vector3f(-half + i,0, -half), new Vector3f(-half + i, 0, half), gridColor);
+            }
+        }
+    }
+
+    private static void processControls(float dt) {
         // Cursor capture control
         if (GLFWInputController.keyBeginPress(GLFW_KEY_LEFT_ALT)) {
             captureMouse = !captureMouse;

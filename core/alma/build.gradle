@@ -2,8 +2,7 @@ plugins {
     id 'java-library'
 }
 
-sourceCompatibility = "17"
-targetCompatibility = "17"
+
 
 group 'alma'
 version '0.1.0'
