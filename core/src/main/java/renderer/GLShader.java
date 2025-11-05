@@ -1,4 +1,4 @@
-package core.glRenderer;
+package renderer;
 
 import api.DiaLogger;
 import assets.Shader;
@@ -6,8 +6,8 @@ import org.joml.*;
 import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL20.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 /**
  * Shader
@@ -46,37 +46,37 @@ public class GLShader implements Shader {
         boolean failed = false;
 
         // Vertex shader
-        vertexId = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexId, vertex);
-        glCompileShader(vertexId);
-        if (glGetShaderi(vertexId, GL_COMPILE_STATUS) == GL_FALSE) {
+        vertexId = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
+        GL20.glShaderSource(vertexId, vertex);
+        GL20.glCompileShader(vertexId);
+        if (GL20.glGetShaderi(vertexId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             failed = true;
-            int len = glGetShaderi(vertexId, GL_INFO_LOG_LENGTH);
-            logger.log(GLShader.class, "Error while compiling VERTEX SHADER: \n" + glGetShaderInfoLog(vertexId, len), DiaLogger.levels.ERROR);
+            int len = GL20.glGetShaderi(vertexId, GL20.GL_INFO_LOG_LENGTH);
+            logger.log(GLShader.class, "Error while compiling VERTEX SHADER: \n" + GL20.glGetShaderInfoLog(vertexId, len), DiaLogger.levels.ERROR);
         }
 
         // Fragment shader
-        fragmentId = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentId, fragment);
-        glCompileShader(fragmentId);
-        if (glGetShaderi(fragmentId, GL_COMPILE_STATUS) == GL_FALSE) {
+        fragmentId = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
+        GL20.glShaderSource(fragmentId, fragment);
+        GL20.glCompileShader(fragmentId);
+        if (GL20.glGetShaderi(fragmentId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             failed = true;
-            int len = glGetShaderi(fragmentId, GL_INFO_LOG_LENGTH);
-            logger.log(GLShader.class, "Error while compiling FRAGMENT SHADER: \n" + glGetShaderInfoLog(fragmentId, len), DiaLogger.levels.ERROR);
+            int len = GL20.glGetShaderi(fragmentId, GL20.GL_INFO_LOG_LENGTH);
+            logger.log(GLShader.class, "Error while compiling FRAGMENT SHADER: \n" + GL20.glGetShaderInfoLog(fragmentId, len), DiaLogger.levels.ERROR);
         }
 
         if (!failed) {
-            programId = glCreateProgram();
-            glAttachShader(programId, vertexId);
-            glAttachShader(programId, fragmentId);
-            glLinkProgram(programId);
-            if (glGetProgrami(programId, GL_LINK_STATUS) == GL_FALSE) {
+            programId = GL20.glCreateProgram();
+            GL20.glAttachShader(programId, vertexId);
+            GL20.glAttachShader(programId, fragmentId);
+            GL20.glLinkProgram(programId);
+            if (GL20.glGetProgrami(programId, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
                 programId = -1;
             }
         }
 
-        glDeleteShader(vertexId);
-        glDeleteShader(fragmentId);
+        GL20.glDeleteShader(vertexId);
+        GL20.glDeleteShader(fragmentId);
     }
 
     /**
@@ -85,7 +85,7 @@ public class GLShader implements Shader {
     public void use() {
         if (!inUse && this.programId > 0) {
             inUse = true;
-            glUseProgram(this.programId);
+            GL20.glUseProgram(this.programId);
         }
     }
 
@@ -94,64 +94,64 @@ public class GLShader implements Shader {
      */
     public void detach() {
         inUse = false;
-        glUseProgram(0);
+        GL20.glUseProgram(0);
     }
 
     public void uploadMat4f(String name, Matrix4f mat) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
         FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
         mat.get(matBuffer);
-        glUniformMatrix4fv(location, false, matBuffer);
+        GL20.glUniformMatrix4fv(location, false, matBuffer);
     }
 
     public void uploadMat3f(String name, Matrix3f mat) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
         FloatBuffer matBuffer = BufferUtils.createFloatBuffer(9);
         mat.get(matBuffer);
-        glUniformMatrix3fv(location, false, matBuffer);
+        GL20.glUniformMatrix3fv(location, false, matBuffer);
     }
 
     public void uploadVec4f(String name, Vector4f vec) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
-        glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
+        GL20.glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
     }
 
     public void uploadVec3f(String name, Vector3f vec) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
-        glUniform3f(location, vec.x, vec.y, vec.z);
+        GL20.glUniform3f(location, vec.x, vec.y, vec.z);
     }
 
     public void uploadVec2f(String name, Vector2f vec) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
-        glUniform2f(location, vec.x, vec.y);
+        GL20.glUniform2f(location, vec.x, vec.y);
     }
 
     public void uploadFloat(String name, float value) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
-        glUniform1f(location, value);
+        GL20.glUniform1f(location, value);
     }
 
     public void uploadInt(String name, int value) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
-        glUniform1i(location, value);
+        GL20.glUniform1i(location, value);
     }
 
     public void uploadTexture(String name, int slot) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
-        glUniform1i(location, slot);
+        GL20.glUniform1i(location, slot);
     }
 
     public void uploadIntArray(String name, int[] array) {
-        int location = glGetUniformLocation(programId, name);
+        int location = GL20.glGetUniformLocation(programId, name);
         use();
-        glUniform1iv(location, array);
+        GL20.glUniform1iv(location, array);
     }
 }

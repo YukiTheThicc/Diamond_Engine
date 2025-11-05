@@ -1,19 +1,10 @@
-package core.glRenderer;
+package renderer;
 
 import api.*;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL;
-
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_LINES;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import org.lwjgl.opengl.*;
 
 /**
  * glrenderer.GLRenderer
@@ -37,8 +28,8 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
     public void init() {
         LineRenderer.lineCount = 0;
         GL.createCapabilities();
-        glDisable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     public void drawLines() {
@@ -57,8 +48,8 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
      */
     @Override
     public void renderFrame(Matrix4f view, Matrix4f projection) {
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GL11.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         LineRenderer.draw(view, projection, logger);
     }
 
@@ -184,23 +175,23 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
             // Lazily compile the shaders in case they weren't compiled before and bind buffers
             if (!started) {
                 lineShader.compile(logger);
-                vaoID = glGenVertexArrays();
-                glBindVertexArray(vaoID);
+                vaoID = GL30.glGenVertexArrays();
+                GL30.glBindVertexArray(vaoID);
 
-                vboID = glGenBuffers();
-                glBindBuffer(GL_ARRAY_BUFFER, vboID);
-                glBufferData(GL_ARRAY_BUFFER, (long) vertexArray.length * Float.BYTES, GL_DYNAMIC_DRAW);
+                vboID = GL15.glGenBuffers();
+                GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
+                GL15.glBufferData(GL15.GL_ARRAY_BUFFER, (long) vertexArray.length * Float.BYTES, GL15.GL_DYNAMIC_DRAW);
 
-                glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0);
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
-                glEnableVertexAttribArray(1);
-                glLineWidth(2f);
+                GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 6 * Float.BYTES, 0);
+                GL20.glEnableVertexAttribArray(0);
+                GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
+                GL20.glEnableVertexAttribArray(1);
+                GL11.glLineWidth(2f);
                 started = true;
             }
 
-            glBindBuffer(GL_ARRAY_BUFFER, vboID);
-            glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexArray, GL15.GL_DYNAMIC_DRAW);
 
             // Use our shader
             lineShader.use();
@@ -209,18 +200,18 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
             lineShader.uploadInt("uType", 0);
 
             // Bind the vao
-            glBindVertexArray(vaoID);
-            glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
+            GL30.glBindVertexArray(vaoID);
+            GL20.glEnableVertexAttribArray(0);
+            GL20.glEnableVertexAttribArray(1);
 
             // Draw the batch
-            glEnable(GL_BLEND);
-            glDrawArrays(GL_LINES, 0, lineCount * 2);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glDrawArrays(GL11.GL_LINES, 0, lineCount * 2);
 
             // Disable Location
-            glDisableVertexAttribArray(0);
-            glDisableVertexAttribArray(1);
-            glBindVertexArray(0);
+            GL20.glDisableVertexAttribArray(0);
+            GL20.glDisableVertexAttribArray(1);
+            GL30.glBindVertexArray(0);
 
             // Unbind shader, and reset line index to O
             lineShader.detach();
@@ -230,6 +221,6 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
 
     @Override
     public void adjustSize(int width, int height) {
-        glViewport(0, 0, width, height);
+        GL11.glViewport(0, 0, width, height);
     }
 }

@@ -1,9 +1,11 @@
-package core.glRenderer;
+package renderer;
 
 import api.DiaAssetLoader;
 import api.DiaLogger;
 import assets.Texture;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.stb.STBImage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -11,8 +13,6 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.stb.STBImage.*;
 
 /**
  * AssetLoader
@@ -41,35 +41,35 @@ public class GLAssetLoader implements DiaAssetLoader {
         IntBuffer channels = BufferUtils.createIntBuffer(1);
 
         // Load bytes from origin path
-        stbi_set_flip_vertically_on_load(false);
-        ByteBuffer bytes = stbi_load(from, x, y, channels, 0);
+        STBImage.stbi_set_flip_vertically_on_load(false);
+        ByteBuffer bytes = STBImage.stbi_load(from, x, y, channels, 0);
 
         if (bytes != null) {
 
             // Initialize texture
-            int textureId = glGenTextures();
-            glBindTexture(GL_TEXTURE_2D, textureId);
+            int textureId = GL11.glGenTextures();
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
 
             // Set texture parameters
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
             int width = x.get(0);
             int height = y.get(0);
             // Create texture based on if the texture has been loaded properly or not
             if (channels.get(0) == 4) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x.get(0), y.get(0), 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+                GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, x.get(0), y.get(0), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, bytes);
                 texture = new Texture(textureId, width, height, from);
             } else if (channels.get(0) == 3) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x.get(0), y.get(0), 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
+                GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, x.get(0), y.get(0), 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, bytes);
                 texture = new Texture(textureId, width, height, from);
             } else {
                 texture = new Texture(-1, -1, -1, from);
                 logger.log(assets.Texture.class, "Failed to load texture, unexpected number of channels");
             }
-            stbi_image_free(bytes);
+            STBImage.stbi_image_free(bytes);
         }
         return texture;
     }

@@ -3,8 +3,9 @@ package stage_0;
 import api.*;
 import assets.Texture;
 import core.GLFWWindow;
-import core.glRenderer.*;
 import org.lwjgl.opengl.GL;
+import renderer.GLAssetLoader;
+import renderer.GLShader;
 import utils.Logger;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;

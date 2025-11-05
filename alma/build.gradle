@@ -1,15 +1,16 @@
 plugins {
-    id 'java-library'
+    id("java")
 }
 
-
-
-group 'alma'
-version '0.1.0'
+group = "alma"
+version = "0.1.0"
 
 repositories {
     mavenCentral()
 }
+
+sourceCompatibility = "17"
+targetCompatibility = "17"
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'

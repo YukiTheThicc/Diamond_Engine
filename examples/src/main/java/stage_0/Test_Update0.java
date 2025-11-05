@@ -2,10 +2,8 @@ package stage_0;
 
 import api.DiaRenderer;
 import api.DiaWindow;
-import core.Camera;
-import core.GLFWInputController;
 import core.GLFWWindow;
-import core.glRenderer.GLRenderer;
+import renderer.GLRenderer;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import utils.Logger;

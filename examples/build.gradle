@@ -9,6 +9,9 @@ repositories {
     mavenCentral()
 }
 
+sourceCompatibility = "17"
+targetCompatibility = "17"
+
 project.ext.lwjglVersion = "3.3.1"
 project.ext.lwjglNatives = "natives-windows"
 project.ext.jomlVersion = "1.10.5"
@@ -19,7 +22,6 @@ dependencies {
 
     // Project dependencies
     implementation project(':core')
-    implementation project(':core:GLRenderer')
 
     // JOML
     implementation "org.joml:joml:${jomlVersion}"
