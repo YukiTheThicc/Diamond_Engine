@@ -1,7 +1,7 @@
 package stage_0;
 
 import api.*;
-import assets.Texture;
+import core.assets.Texture;
 import core.Camera;
 import core.GLFWWindow;
 import core.GLFWInputController;
@@ -9,8 +9,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
-import renderer.GLAssetLoader;
-import renderer.GLShader;
+import core.glRenderer.GLAssetLoader;
+import core.glRenderer.GLShader;
 import utils.DiaMath;
 import utils.Logger;
 

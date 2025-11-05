@@ -7,7 +7,7 @@ import java.util.function.Consumer;
  *
  * @author Santiago Barreiro
  */
-public interface DiaEntityArchitecture {
+public interface DiaEntityPool {
 
     public interface IDiaEntity {
 

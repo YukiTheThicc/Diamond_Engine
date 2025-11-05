@@ -1,7 +1,7 @@
 package api;
 
-import assets.Shader;
-import assets.Texture;
+import core.assets.Shader;
+import core.assets.Texture;
 
 /**
  * DiaAssetLoader

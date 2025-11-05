@@ -1,29 +1,22 @@
 package stage_0;
 
 import api.*;
-import assets.Texture;
+import core.AssetPool;
+import core.assets.Texture;
 import core.Camera;
 import core.GLFWWindow;
 import core.GLFWInputController;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL;
-import renderer.GLAssetLoader;
-import renderer.GLRenderer;
-import renderer.GLShader;
+import core.glRenderer.GLAssetLoader;
+import core.glRenderer.GLRenderer;
+import core.glRenderer.GLShader;
 import utils.DiaMath;
 import utils.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL20.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL20.glBindTexture;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 /**
  * Test_Version
@@ -37,7 +30,7 @@ public class Test_Update3 {
     // ATTRIBUTES
     static DiaLogger logger;
     static DiaWindow window;
-    static DiaAssetLoader assetLoader;
+    static AssetPool assetPool;
     static GLRenderer glRenderer;
     static GLShader textureShader;
     static Camera camera;
@@ -47,40 +40,58 @@ public class Test_Update3 {
     static float cursorSensitivity = 0.1f;
     static boolean captureMouse = true;
 
+    static float[] vertices = {
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+
     public static void main(String[] args) {
 
         logger = new Logger();
         window = GLFWWindow.get();
         window.init(800, 600);
-        assetLoader = new GLAssetLoader(logger);
+        assetPool = new AssetPool(logger, new GLAssetLoader(logger));
         glRenderer = new GLRenderer(logger);
         glRenderer.init();
-        GLFWInputController.init(800, 600);
-
-        GL.createCapabilities();
-        glEnable(GL_DEPTH_TEST);
-        glDisable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-
-        int texturedVAO = setupTexturedExample();
-
-        String exampleTexture = System.getProperty("user.dir") + "\\examples\\res\\top.png";
-        System.out.println("Attempting to load example texture from = " + exampleTexture + "...");
-        Texture texture = assetLoader.loadTexture(exampleTexture);
-
-        // Add resize listener for the window to adjust viewport
-        window.addResizeObserver(new DiaWindow.ResizeObserver() {
-            @Override
-            public void adjustSize(int width, int height) {
-                glViewport(0, 0, width, height);
-            }
-        });
-
-
-        boolean running = true;
-        float rotationZ = 0f;
-        float rotationX = 0f;
         camera = new Camera(
                 new Vector3f(0f, 0f, -1f),
                 new Vector3f(0f, 1f, 0f),
@@ -90,7 +101,21 @@ public class Test_Update3 {
         );
         camera.moveTo(new Vector3f(-5f,3f, -5f));
         camera.rotate(45f, -30f, 0f);
+        GLFWInputController.init(800, 600);
 
+        String vs = System.getProperty("user.dir") + "\\examples\\src\\main\\resources\\texturedVertex.glsl";
+        String fs = System.getProperty("user.dir") + "\\examples\\src\\main\\resources\\texturedFragment.glsl";
+        textureShader = (GLShader) assetPool.getShader(vs, fs);
+
+        // Add resize listener for the window to adjust viewport
+        window.addResizeObserver(new DiaWindow.ResizeObserver() {
+            @Override
+            public void adjustSize(int width, int height) {
+                glViewport(0, 0, width, height);
+            }
+        });
+
+        boolean running = true;
         float bt = (float) glfwGetTime();
         float et = (float) glfwGetTime();
         float dt = 0f;
@@ -106,7 +131,6 @@ public class Test_Update3 {
                 new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f)),
                 new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-5f, 5f))
         };
-        float cRot = 0f;
 
         while (running) {
 
@@ -117,29 +141,6 @@ public class Test_Update3 {
 
             renderGrid();
             glRenderer.renderFrame(view, projection);
-
-
-            cRot += dt;
-            glBindTexture(GL_TEXTURE_2D, texture.getId());
-            textureShader.use();
-            textureShader.uploadMat4f("view", view);
-            textureShader.uploadMat4f("projection", projection);
-            for (int i = 0; i < positions.length; i++) {
-                Matrix4f model = new Matrix4f().identity();
-                model = model.translate(positions[i]);
-                if (i == 0) {
-                    model.rotate(rotationX, 1f,0f,0f);
-                    model.rotate(rotationZ, 0f,0f,1f);
-                }
-                if (i % 3 == 1) {
-                    model.rotate(cRot * (float) i / 9, 1f,0f,0f);
-                    model.rotate(cRot * (float) i / 9, 0f,0f,1f);
-                }
-                textureShader.uploadMat4f("model", model);
-                glBindVertexArray(texturedVAO);
-                glDrawArrays(GL_TRIANGLES, 0, 36);
-            }
-            textureShader.detach();
 
             et = (float) glfwGetTime();
             dt = et - bt;
@@ -153,6 +154,10 @@ public class Test_Update3 {
         window.close();
     }
 
+    private void generateEntities() {
+
+    }
+
     private static void renderGrid() {
         Vector3f gridColor = new Vector3f(0.5f, 0.5f, 0.5f);
         Vector3f originColor = new Vector3f(0.9f, 0.9f, 0.9f);
@@ -160,7 +165,6 @@ public class Test_Update3 {
         glRenderer.addLine(new Vector3f(0,-1000,0), new Vector3f(0, 1000, 0), originColor);
         glRenderer.addLine(new Vector3f(0,0,-1000), new Vector3f(0, 0, 1000), originColor);
 
-        Vector3f cameraPos = camera.getPos();
         int half = NUM_GRID_LINES / 2;
         for (int i = 0; i < NUM_GRID_LINES; i++) {
             if (-half + i != 0) {
@@ -195,78 +199,5 @@ public class Test_Update3 {
         if(cameraPitch < -89.0f) cameraPitch = -89.0f;
         camera.rotate(cameraYaw, cameraPitch, 0f);
         camera.zoom(GLFWInputController.getScroll()/10);
-
-    }
-
-    private static int setupTexturedExample() {
-
-        String vs = System.getProperty("user.dir") + "\\examples\\src\\main\\resources\\texturedVertex.glsl";
-        String fs = System.getProperty("user.dir") + "\\examples\\src\\main\\resources\\texturedFragment.glsl";
-        textureShader = (GLShader) assetLoader.loadShader(vs, fs);
-        textureShader.compile(logger);
-
-        float[] vertices = {
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-                0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-        };
-
-        int[] indices = {
-                0, 1, 3, // first triangle
-                1, 2, 3  // second triangle
-        };
-
-        int VBO, VAO, EBO;
-        VAO = glGenVertexArrays();
-        VBO = glGenBuffers();
-        EBO = glGenBuffers();
-        glBindVertexArray(VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * Float.BYTES, 0);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES);
-        glEnableVertexAttribArray(1);
-        return VAO;
     }
 }

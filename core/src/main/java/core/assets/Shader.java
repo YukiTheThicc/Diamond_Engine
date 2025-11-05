@@ -1,4 +1,4 @@
-package assets;
+package core.assets;
 
 import api.DiaLogger;
 

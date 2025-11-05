@@ -3,7 +3,7 @@ package stage_0;
 import api.DiaRenderer;
 import api.DiaWindow;
 import core.GLFWWindow;
-import renderer.GLRenderer;
+import core.glRenderer.GLRenderer;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import utils.Logger;

@@ -1,4 +1,4 @@
-package assets;
+package core.assets;
 
 /**
  * Texture asset. Implements no functionality. Stores its corresponding API id, width, height, and origin path. Should

@@ -1,7 +1,7 @@
 ### [UPDATE_0]: Basic engine setup
 
 * [X] Basic ECS implementation with components
-* [x] Basic OpenGL 2D line renderer
+* [x] Basic OpenGL 2D line glRenderer
 * [x] Basic player input (register key presses)
 * [x] Basic window to display current features
 * [x] Stage_0 example app that displays the frame of the projection area
@@ -13,7 +13,7 @@
 * [x] Basic texture rendering
 * [x] Basic asset loading
 > _[08/10/25]_ Due to the fact that is needed to load a texture to be able to render it, the asset management side of 
-things has been slightly forwarded. Textures should be handled and loaded completely separately from the renderer, as 
+things has been slightly forwarded. Textures should be handled and loaded completely separately from the glRenderer, as 
 to allow different render APIs to use the same assets and engine parts that are technically graphics API agnostic
 * [x] Stage_1 example app that draws a triangle with blended vertex colors and an example of textured rendering
 

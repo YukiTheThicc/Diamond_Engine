@@ -1,8 +1,8 @@
-package renderer;
+package core.glRenderer;
 
 import api.DiaAssetLoader;
 import api.DiaLogger;
-import assets.Texture;
+import core.assets.Texture;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
@@ -67,7 +67,7 @@ public class GLAssetLoader implements DiaAssetLoader {
                 texture = new Texture(textureId, width, height, from);
             } else {
                 texture = new Texture(-1, -1, -1, from);
-                logger.log(assets.Texture.class, "Failed to load texture, unexpected number of channels");
+                logger.log(Texture.class, "Failed to load texture, unexpected number of channels");
             }
             STBImage.stbi_image_free(bytes);
         }

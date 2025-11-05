@@ -2,14 +2,14 @@ package core;
 
 import alma.AlmaPool;
 import alma.api.IComponent;
-import api.DiaEntityArchitecture;
+import api.DiaEntityPool;
 
 /**
  * Alma
  *
  * @author Santiago Barreiro
  */
-public class Alma implements DiaEntityArchitecture {
+public class Alma implements DiaEntityPool {
 
     AlmaPool alma = null;
 
