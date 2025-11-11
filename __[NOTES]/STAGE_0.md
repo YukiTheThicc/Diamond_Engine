@@ -19,8 +19,8 @@ to allow different render APIs to use the same assets and engine parts that are 
 
 ### [UPDATE_2]: PROJECTION TIEM
 
-* [ ] Camera zoom and projection control
-* [ ] Transformations
+* [x] Camera zoom and projection control
+* [x] Transformations
 * [x] example app adapted to use and control projection, with transformed objects from the previous example, that can be
 controlled by keyboard inputs.
 

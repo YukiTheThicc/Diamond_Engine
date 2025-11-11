@@ -1,8 +1,9 @@
 package core.glRenderer;
 
 import api.*;
+import core.exceptions.DiamondException;
+import core.RenderTarget;
 import core.assets.Texture;
-import core.components.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -21,9 +22,11 @@ import static org.lwjgl.opengl.GL30.*;
 public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
 
     // CONSTANTS
+    static final int NUM_GRID_LINES = 50;
 
     // ATTRIBUTES
     boolean drawLines = false;
+    boolean drawGrid = false;
     DiaLogger logger;
 
     // CONSTRUCTOR
@@ -48,16 +51,29 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
         if (drawLines) drawLines = false;
     }
 
+    public void drawGrid(boolean draw) {
+        this.drawGrid = draw;
+    }
 
     /**
      * Renders the current frame
-     * @param view View matrix to render the frame from
-     * @param projection Projection matrix to use for rendering
+     * @param target Target for rendering
      */
+    @Override
+    public void renderFrame(RenderTarget target) {
+        if (target == null) throw new DiamondException(this.getClass(), "Tried to render from null target");
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if (drawGrid) renderGrid();
+        LineRenderer.draw(target.getTargetView(), target.getTargetProjection(), logger);
+
+    }
+
     @Override
     public void renderFrame(Matrix4f view, Matrix4f projection) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if (drawGrid) renderGrid();
         LineRenderer.draw(view, projection, logger);
     }
 
@@ -81,7 +97,7 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
         LineRenderer.addLine(from, to, color);
     }
 
-    public int bindModel(float[] vertices) {
+    public int bindMesh(float[] vertices) {
         int VBO, VAO;
         VAO = glGenVertexArrays();
         VBO = glGenBuffers();
@@ -104,6 +120,25 @@ public class GLRenderer implements DiaRenderer, DiaWindow.ResizeObserver {
         shader.uploadMat4f("model", transform);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, size);
+    }
+
+    private void renderGrid() {
+        Vector3f gridColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        Vector3f originColor = new Vector3f(0.9f, 0.9f, 0.9f);
+
+        // Main origin Axis
+        addLine(new Vector3f(-1000, 0, 0), new Vector3f(1000, 0, 0), originColor);
+        addLine(new Vector3f(0, -1000, 0), new Vector3f(0, 1000, 0), originColor);
+        addLine(new Vector3f(0, 0, -1000), new Vector3f(0, 0, 1000), originColor);
+
+        // X-Z plane grid
+        int half = NUM_GRID_LINES / 2;
+        for (int i = 0; i < NUM_GRID_LINES; i++) {
+            if (-half + i != 0) {
+                addLine(new Vector3f(-half, 0, -half + i), new Vector3f(half, 0, -half + i), gridColor);
+                addLine(new Vector3f(-half + i, 0, -half), new Vector3f(-half + i, 0, half), gridColor);
+            }
+        }
     }
 
     @Override

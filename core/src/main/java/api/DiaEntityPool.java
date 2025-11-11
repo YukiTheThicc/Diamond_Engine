@@ -9,22 +9,30 @@ import java.util.function.Consumer;
  */
 public interface DiaEntityPool {
 
-    public interface IDiaEntity {
+    interface IDiaEntity {
 
     }
 
-    public interface IDiaComponent {
+    interface IDiaComponent {
         IDiaComponent copy();
     }
 
-    public interface IDiaQueryResult {
+    interface IDiaQueryResult {
 
         IDiaQueryResult forEachEntity(Consumer<IDiaEntity> action);
     }
 
     void init();
 
-    void createEntity(IDiaComponent[] components);
+    int createEntity(IDiaComponent[] components);
 
+    boolean deleteEntity(int entity);
 
+    IDiaComponent[] retrieveEntity(int entity);
+
+    void registerSystem(DiaSystem system);
+
+    void unregisterSystem(DiaSystem system);
+
+    void dispatchSystems(float dt);
 }

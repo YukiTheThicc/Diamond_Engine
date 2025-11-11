@@ -4,7 +4,6 @@ import api.DiaWindow;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 
-import java.awt.*;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
@@ -30,7 +29,7 @@ public class GLFWWindow implements DiaWindow {
     private long glfwWindow;                        // GL core.Window address
     private int width, height;
     private static GLFWWindow window = null;        // Unique window instance
-    private ArrayList<ResizeObserver> resizeObservers = new ArrayList<>();
+    private final ArrayList<ResizeObserver> resizeObservers = new ArrayList<>();
 
     // CONSTRUCTORS
     private GLFWWindow() {
@@ -96,6 +95,8 @@ public class GLFWWindow implements DiaWindow {
         glfwSwapInterval(1);
 
         glfwShowWindow(glfwWindow);
+
+        GLFWInputController.init(width, height);
     }
 
     @Override

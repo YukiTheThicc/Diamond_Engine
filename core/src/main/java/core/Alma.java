@@ -3,6 +3,7 @@ package core;
 import alma.AlmaPool;
 import alma.api.IComponent;
 import api.DiaEntityPool;
+import api.DiaSystem;
 
 /**
  * Alma
@@ -19,7 +20,32 @@ public class Alma implements DiaEntityPool {
     }
 
     @Override
-    public void createEntity(IDiaComponent[] components) {
-        alma.createEntity((IComponent[]) components);
+    public int createEntity(IDiaComponent[] components) {
+        return alma.createEntity((IComponent[]) components);
+    }
+
+    @Override
+    public boolean deleteEntity(int entity) {
+        return false;
+    }
+
+    @Override
+    public IDiaComponent[] retrieveEntity(int entity) {
+        return new IDiaComponent[0];
+    }
+
+    @Override
+    public void registerSystem(DiaSystem system) {
+
+    }
+
+    @Override
+    public void unregisterSystem(DiaSystem system) {
+
+    }
+
+    @Override
+    public void dispatchSystems(float dt) {
+
     }
 }
