@@ -3,9 +3,7 @@ package core.simpleEntities;
 import api.DiaEntityPool;
 import api.DiaSystem;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * SimpleEntities
@@ -14,30 +12,50 @@ import java.util.HashMap;
  */
 public class SimpleEntities implements DiaEntityPool {
 
-    private static class Entity implements IDiaEntity {
+    private static class Entity {
         // ATTRIBUTES
         protected final int id;
-        protected IDiaComponent[] components;
-        protected Class<?>[] archetype;
+        protected Object[] components;
+        protected ArrayList<Class<?>> archetype;
 
         // CONSTRUCTORS
-        public Entity(int id, Class<?>[] archetype, IDiaComponent[] components) {
+        public Entity(int id, Class<?>[] archetype, Object[] components) {
             this.id = id;
-            this.archetype = archetype;
+            this.archetype = new ArrayList<>(Arrays.stream(archetype).toList());
             this.components = components;
+        }
+    }
+
+    public static class SimpleEntitiesIterator implements Iterator<Object> {
+
+        private final Collection<Entity> entities;
+        private int iterated = 0;
+        private int count;
+
+        public SimpleEntitiesIterator(Collection<Entity> entities) {
+            this.entities = entities;
+            this.count = entities.size();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterated < count;
+        }
+
+        @Override
+        public Entity next() {
+            return null;
         }
     }
 
     // ATTRIBUTES
     private int count;
     private final HashMap<Integer, Entity> entities;
-    private final HashMap<Class<?>[], ArrayList<Integer>> compositionTree;
     private final ArrayList<DiaSystem> systems;
 
     // CONSTRUCTORS
     public SimpleEntities() {
         this.entities = new HashMap<>();
-        this.compositionTree = new HashMap<>();
         this.systems = new ArrayList<>();
     }
 
@@ -48,12 +66,10 @@ public class SimpleEntities implements DiaEntityPool {
     }
 
     @Override
-    public int createEntity(IDiaComponent[] components) {
+    public int createEntity(Object[] components) {
         Class<?>[] archetype = new Class[components.length];
+        for (int i = 0; i < components.length; i++) archetype[i] = components[i].getClass();
         entities.put(count, new Entity(count, archetype, components));
-        for (int i = 0; i < components.length; i++) archetype[i] = components.getClass();
-        ArrayList<Integer> tree = compositionTree.computeIfAbsent(archetype, k -> new ArrayList<>());
-        tree.add(count);
         count++;
         return count - 1;
     }
@@ -67,14 +83,18 @@ public class SimpleEntities implements DiaEntityPool {
     }
 
     @Override
-    public IDiaComponent[] retrieveEntity(int entity) {
+    public Object[] retrieveEntity(int entity) {
         Entity e = entities.get(entity);
         if (e != null) return e.components;
         return null;
     }
 
+    public Iterator<Object> queryEntitiesWith(Class<?>[] types) {
+        return new SimpleEntitiesIterator(entities.values());
+    }
+
     @Override
-    public void registerSystem(DiaSystem system) {
+    public void scheduleSystem(DiaSystem system) {
         systems.add(system);
     }
 
@@ -86,12 +106,7 @@ public class SimpleEntities implements DiaEntityPool {
     @Override
     public void dispatchSystems(float dt) {
         for (DiaSystem sys : systems) {
-            Class<?>[] archetype = sys.getAffectedComponents();
-            for (Entity entity : entities.values()) {
-                if (entity.archetype == archetype) {
-                    sys.execute(entity.components, dt);
-                }
-            }
+           sys.execute(this, dt);
         }
     }
 }

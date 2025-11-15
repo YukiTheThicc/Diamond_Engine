@@ -10,10 +10,12 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
  *
  * @author Santiago Barreiro
  */
-public class Diamond {
+public final class Diamond {
 
     // CONSTANTS
-
+    public enum DiamondEvents {
+        ENGINE_START
+    }
 
     // ATTRIBUTES
     private final DiaWindow window;
@@ -44,23 +46,18 @@ public class Diamond {
     }
 
     // METHODS
-    public void init(int frameSizeX, int frameSizeY) {
-        window.init(frameSizeX, frameSizeY);
-        renderer.init();
-        entityPool.init();
-    }
-
     public void start() {
 
         float et;
         float bt = 0f;
-
+        EventPool.throwEvent(new EventPool.Event(DiamondEvents.ENGINE_START));
         try {
             running = true;
             while (running) {
 
                 window.pollEvents();
-                renderer.renderFrame(currentTarget);
+                entityPool.dispatchSystems(dt);
+                EventPool.dispatchEvents();
 
                 et = (float) glfwGetTime();
                 dt = et - bt;
@@ -79,9 +76,5 @@ public class Diamond {
 
     public void close() {
         window.close();
-    }
-
-    public void addSystem(DiaSystem system) {
-
     }
 }

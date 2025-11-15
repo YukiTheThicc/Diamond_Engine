@@ -3,7 +3,6 @@ package alma.architecture;
 import alma.Entity;
 import alma.IdHandler;
 import alma.api.IClassIndex;
-import alma.api.IComponent;
 import alma.utils.AlmaException;
 import alma.utils.BitFlag;
 import alma.utils.IntStack;
@@ -11,7 +10,6 @@ import alma.utils.IntStack;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A partition is a linked data structure that holds the data from a specific entity composition.
@@ -54,11 +52,11 @@ public final class Partition {
      * @param components Array of components to be aligned
      * @return A new array with the aligned components
      */
-    private IComponent[] alignComponents(IComponent[] components) {
+    private Object[] alignComponents(Object[] components) {
         if (components.length != stride)
             throw new AlmaException("Tried to insert wrong amount of components in partition");
-        IComponent[] alignedComponents = new IComponent[components.length];
-        for (IComponent component : components) {
+        Object[] alignedComponents = new Object[components.length];
+        for (Object component : components) {
             int pos = componentLayout[classIndex.get(component.getClass())];
             if (pos == -1) throw new AlmaException("Tried to insert a component that doesn't belong in this partition");
             alignedComponents[pos] = component;
@@ -85,7 +83,7 @@ public final class Partition {
      * @param components Array of component instances
      * @return ID of the new entity
      */
-    public int addEntityUnsafe(IComponent[] components) {
+    public int addEntityUnsafe(Object[] components) {
         int id = idStack.pop();
         if (id == idHandler.invalidValue) id = idHandler.generateIID(iid, size);
         int chunkId = idHandler.getPartitionChunk(id);
@@ -103,7 +101,7 @@ public final class Partition {
      * @param components Array of component instances
      * @return ID of the new entity
      */
-    public int addEntitySafe(IComponent[] components) {
+    public int addEntitySafe(Object[] components) {
 
         int id = idStack.pop();
         if (id == idHandler.invalidValue) id = idHandler.generateIID(iid, size);
@@ -154,12 +152,12 @@ public final class Partition {
      * @param entity ID of the entity to recover the components from
      * @return Array of components from the passed entity
      */
-    public IComponent[] fetchEntityComponents(int entity) {
+    public Object[] fetchEntityComponents(int entity) {
         if (idHandler.getPartitionId(entity) != iid)
             throw new AlmaException("Tried to retrieve components for an entity of a different composition");
         if (idHandler.getItemId(entity) == idHandler.invalidValue)
             throw new AlmaException("Tried to fetch components of a non-existing entity");
-        IComponent[] entityComponents = new IComponent[stride];
+        Object[] entityComponents = new Object[stride];
         int chunkId = idHandler.getPartitionChunk(entity);
         int first = idHandler.getPartitionChunkPos(entity) * stride;
         System.arraycopy(chunksSlots[chunkId].componentsSlots, first, entityComponents, 0, stride);
@@ -172,13 +170,13 @@ public final class Partition {
      * @param entity ID of the entity to recover the components from
      * @return The target components of the entity
      */
-    public IComponent[] fetchEntityComponents(int entity, int[] componentIndex) {
+    public Object[] fetchEntityComponents(int entity, int[] componentIndex) {
         if (idHandler.getPartitionId(entity) != iid)
             throw new AlmaException("Tried to retrieve components for an entity of a different composition");
         if (idHandler.getItemId(entity) == idHandler.invalidValue)
             throw new AlmaException("Tried to fetch components of a non-existing entity");
 
-        IComponent[] entityComponents = new IComponent[componentIndex.length];
+        Object[] entityComponents = new Object[componentIndex.length];
         int chunkId = idHandler.getPartitionChunk(entity);
         int first = idHandler.getPartitionChunkPos(entity) * stride;
         for (int i = 0; i < componentIndex.length; i++) {
@@ -211,13 +209,13 @@ public final class Partition {
 
         // ATTRIBUTES
         private final int[] entitySlots;                    // Array of entity IDs handled by this chunk
-        private final IComponent[] componentsSlots;         // List of components handled by the partition chunk
+        private final Object[] componentsSlots;             // List of components handled by the partition chunk
 
         // CONSTRUCTORS
         private PartitionChunk(int chunkSize, int stride, int invalidValue) {
             this.entitySlots = new int[chunkSize];
             Arrays.fill(this.entitySlots, invalidValue);
-            this.componentsSlots = new IComponent[chunkSize * stride];
+            this.componentsSlots = new Object[chunkSize * stride];
         }
 
         // METHODS
@@ -241,10 +239,10 @@ public final class Partition {
          * @param stride     Total offset or size of the component array
          * @param components Array of components corresponding to the new entity
          */
-        private void setEntity(int pos, int entity, int stride, IComponent[] components) {
+        private void setEntity(int pos, int entity, int stride, Object[] components) {
             for (int i = 0; i < stride; i++) {
                 int c_pos = pos * stride + i;
-                if (componentsSlots[c_pos] != null) componentsSlots[c_pos].copy(components[i]);
+                if (componentsSlots[c_pos] != null) componentsSlots[c_pos] = components[i];
                 else componentsSlots[c_pos] = components[i];
             }
             entitySlots[pos] = entity;

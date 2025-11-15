@@ -1,6 +1,5 @@
 package alma.archetypes;
 
-import alma.api.IComponent;
 import alma.utils.ClassIndex;
 
 import java.util.Map;
@@ -79,7 +78,7 @@ public final class ArchetypeMap {
      * @param components List of component classes to match the archetype
      * @return The matched archetype
      */
-    public Archetype getArchetype(IComponent[] components) {
+    public Archetype getArchetype(Object[] components) {
         return getArchetype(classIndex.getComponentClasses(components));
     }
 
@@ -97,7 +96,7 @@ public final class ArchetypeMap {
      * @param components Array of components that want to be found
      * @return Map of archetypes that match the query
      */
-    public Map<ArchetypeHash, Archetype> queryCompositionsWith(IComponent[] components) {
+    public Map<ArchetypeHash, Archetype> queryCompositionsWith(Object[] components) {
         return queryCompositionsWith(classIndex.getComponentClasses(components));
     }
 

@@ -11,9 +11,9 @@ import org.joml.Vector3f;
 public class Transform implements DiaEntityPool.IDiaComponent {
 
     // ATTRIBUTES
-    private Vector3f pos;
-    private Vector3f scale;
-    private Vector3f rotation;
+    public Vector3f pos;
+    public Vector3f scale;
+    public Vector3f rotation;
 
     // CONSTRUCTORS
     public Transform(Vector3f pos, Vector3f scale, Vector3f rotation) {

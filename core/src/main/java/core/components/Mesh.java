@@ -1,6 +1,5 @@
 package core.components;
 
-import api.DiaEntityPool.IDiaComponent;
 import core.assets.Texture;
 
 /**
@@ -8,7 +7,7 @@ import core.assets.Texture;
  *
  * @author Santiago Barreiro
  */
-public class Mesh implements IDiaComponent {
+public class Mesh {
 
     // ATTRIBUTES
     private float[] vertices;
@@ -34,10 +33,5 @@ public class Mesh implements IDiaComponent {
 
     public void setTexture(Texture texture) {
         this.texture = texture;
-    }
-
-    @Override
-    public IDiaComponent copy() {
-        return null;
     }
 }

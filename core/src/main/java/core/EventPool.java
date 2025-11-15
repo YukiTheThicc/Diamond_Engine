@@ -101,9 +101,11 @@ public class EventPool {
     public static void dispatchEvents() {
         if (!initialized) throw new DiamondCriticalException(EventPool.class, "Tried to dispatch events while EventPool is not initialized");
         for (Event event : eventStack) {
-            for (EventObserver observer : observers.get(event.type)) {
-                observer.onEvent(event);
-                if (event.caught) break;
+            if (observers.get(event.type) != null) {
+                for (EventObserver observer : observers.get(event.type)) {
+                    observer.onEvent(event);
+                    if (event.caught) break;
+                }
             }
         }
         eventStack.clear();

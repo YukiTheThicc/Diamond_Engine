@@ -1,7 +1,6 @@
 package alma;
 
 import alma.api.IClassIndex;
-import alma.api.IComponent;
 import alma.architecture.Partition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PrototypeTest {
 
         private Partition sut;
-        private final IComponent[] c1 = new IComponent[]{new PartitionTest.C1()};
-        private final IComponent[] c1c2 = new IComponent[]{new PartitionTest.C1(), new PartitionTest.C2()};
+        private final Object[] c1 = new Object[]{new PartitionTest.C1()};
+        private final Object[] c1c2 = new Object[]{new PartitionTest.C1(), new PartitionTest.C2()};
         private final IClassIndex index = new IClassIndex() {
             private int index = 1;
             // Used to map each class to an Integer value

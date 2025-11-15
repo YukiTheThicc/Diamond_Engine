@@ -1,6 +1,5 @@
 package alma;
 
-import alma.api.IComponent;
 import alma.archetypes.Archetype;
 import alma.archetypes.ArchetypeHash;
 import alma.archetypes.ArchetypeMap;
@@ -56,9 +55,9 @@ class ArchetypeMapTest {
 
         TestUtils.printTestHeader("getIndexTest");
 
-        cm.getArchetype(new IComponent[]{new C3()});
-        cm.getArchetype(new IComponent[]{new C1()});
-        cm.getArchetype(new IComponent[]{new C2()});
+        cm.getArchetype(new Object[]{new C3()});
+        cm.getArchetype(new Object[]{new C1()});
+        cm.getArchetype(new Object[]{new C2()});
         int expectedC1 = 2;
         int expectedC2 = 3;
         int expectedC3 = 1;
@@ -86,9 +85,9 @@ class ArchetypeMapTest {
         int actual3 = 34;
 
         ArchetypeMap cm = new ArchetypeMap();
-        ArchetypeHash composition1 = cm.getClassIndex().getCompositionHash(new IComponent[]{});
-        ArchetypeHash compositionC1C2C3 = cm.getClassIndex().getCompositionHash(new IComponent[] {new C1(), new C2(), new C3()});
-        ArchetypeHash compositionC3 = cm.getClassIndex().getCompositionHash(new IComponent[] {new C3()});
+        ArchetypeHash composition1 = cm.getClassIndex().getCompositionHash(new Object[]{});
+        ArchetypeHash compositionC1C2C3 = cm.getClassIndex().getCompositionHash(new Object[] {new C1(), new C2(), new C3()});
+        ArchetypeHash compositionC3 = cm.getClassIndex().getCompositionHash(new Object[] {new C3()});
         TestUtils.printTestIteration("Empty", actual1, composition1);
         TestUtils.printTestIteration("C1, C2, C3", actual2, compositionC1C2C3);
         TestUtils.printTestIteration("C3", actual3, compositionC3);
@@ -106,10 +105,10 @@ class ArchetypeMapTest {
         Archetype expectedC2C3 = new Archetype(new Class[]{C2.class, C3.class});
         Archetype expectedC3 = new Archetype(new Class[]{C3.class});
         Archetype expectedC1 = new Archetype(new Class[]{C1.class});
-        Archetype compositionC3C2 = cm.getArchetype(new IComponent[] {new C2(), new C3()});
-        Archetype compositionC2C3 = cm.getArchetype(new IComponent[] {new C3(), new C2()});
-        Archetype compositionC3 = cm.getArchetype(new IComponent[] {new C3()});
-        Archetype compositionC1 = cm.getArchetype(new IComponent[] {new C1()});
+        Archetype compositionC3C2 = cm.getArchetype(new Object[] {new C2(), new C3()});
+        Archetype compositionC2C3 = cm.getArchetype(new Object[] {new C3(), new C2()});
+        Archetype compositionC3 = cm.getArchetype(new Object[] {new C3()});
+        Archetype compositionC1 = cm.getArchetype(new Object[] {new C1()});
         TestUtils.printTestIteration("C2 C3", expectedC2C3, compositionC2C3);
         TestUtils.printTestIteration("C2 C3 different order", expectedC2C3, compositionC3C2);
         TestUtils.printTestIteration("C3", expectedC3, compositionC3);
@@ -129,10 +128,10 @@ class ArchetypeMapTest {
         Archetype expectedC2C3 = new Archetype(new Class[]{C2.class, C3.class});
         Archetype expectedC3 = new Archetype(new Class[]{C3.class});
         Archetype expectedC1 = new Archetype(new Class[]{C1.class});
-        Archetype compositionC2C3 = cm.getArchetype(new IComponent[] {new C2(), new C3()});
-        Archetype compositionC3C2 = cm.getArchetype(new IComponent[] {new C3(), new C2()});
-        Archetype compositionC3 = cm.getArchetype(new IComponent[] {new C3()});
-        Archetype compositionC1 = cm.getArchetype(new IComponent[] {new C1()});
+        Archetype compositionC2C3 = cm.getArchetype(new Object[] {new C2(), new C3()});
+        Archetype compositionC3C2 = cm.getArchetype(new Object[] {new C3(), new C2()});
+        Archetype compositionC3 = cm.getArchetype(new Object[] {new C3()});
+        Archetype compositionC1 = cm.getArchetype(new Object[] {new C1()});
         TestUtils.printTestIteration("C2 C3", expectedC2C3, compositionC2C3);
         TestUtils.printTestIteration("C2 C3 different order", expectedC2C3, compositionC3C2);
         TestUtils.printTestIteration("C3", expectedC3, compositionC3);
@@ -147,16 +146,16 @@ class ArchetypeMapTest {
     public void queryCompositionsInnerJoinTest() {
 
         TestUtils.printTestHeader("queryCompositionsInnerJoinTest");
-        cm.getArchetype(new IComponent[]{new C1(), new C2()});
-        cm.getArchetype(new IComponent[]{new C2(), new C3()});
-        cm.getArchetype(new IComponent[]{new C2(), new C3(), new C4()});
-        cm.getArchetype(new IComponent[]{new C3()});
-        cm.getArchetype(new IComponent[]{new C1()});
+        cm.getArchetype(new Object[]{new C1(), new C2()});
+        cm.getArchetype(new Object[]{new C2(), new C3()});
+        cm.getArchetype(new Object[]{new C2(), new C3(), new C4()});
+        cm.getArchetype(new Object[]{new C3()});
+        cm.getArchetype(new Object[]{new C1()});
 
         int expected1 = 2;
         int expected3 = 2;
-        Map<ArchetypeHash, Archetype> actual1 = cm.queryCompositionsWith(new IComponent[]{new C1()});
-        Map<ArchetypeHash, Archetype> actual3 = cm.queryCompositionsWith(new IComponent[]{new C2(), new C3()});
+        Map<ArchetypeHash, Archetype> actual1 = cm.queryCompositionsWith(new Object[]{new C1()});
+        Map<ArchetypeHash, Archetype> actual3 = cm.queryCompositionsWith(new Object[]{new C2(), new C3()});
         TestUtils.printTestIteration("Compositions with C1", expected1, actual1.values());
         TestUtils.printTestIteration("Compositions with C2 and C3", expected3, actual3.values());
 

@@ -7,7 +7,5 @@ package api;
  */
 public interface DiaSystem {
 
-    Class<?>[] getAffectedComponents();
-
-    void execute(DiaEntityPool.IDiaComponent[] components, float dt);
+    void execute(DiaEntityPool pool, float dt);
 }

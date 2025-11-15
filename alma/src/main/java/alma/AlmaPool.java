@@ -1,6 +1,5 @@
 package alma;
 
-import alma.api.IComponent;
 import alma.architecture.Partition;
 import alma.architecture.QueryResult;
 import alma.utils.ClassIndex;
@@ -41,7 +40,7 @@ public final class AlmaPool {
         composition.setPartition(newPartition);
     }
 
-    public int createEntity(IComponent[] composition) {
+    public int createEntity(Object[] composition) {
         ArchetypeHash targetHash = classIndex.getCompositionHash(composition);
         // Lazily create the partition for this composition
         if (!partitions.containsKey(targetHash)) createPartition(targetHash, cm.getArchetype(composition));

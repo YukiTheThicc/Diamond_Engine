@@ -1,6 +1,6 @@
 package api;
 
-import java.util.function.Consumer;
+import java.util.Iterator;
 
 /**
  * DiaEntityArchitecture
@@ -9,28 +9,22 @@ import java.util.function.Consumer;
  */
 public interface DiaEntityPool {
 
-    interface IDiaEntity {
+    interface DiaQueryResult<T> extends Iterable<T>{
 
-    }
-
-    interface IDiaComponent {
-        IDiaComponent copy();
-    }
-
-    interface IDiaQueryResult {
-
-        IDiaQueryResult forEachEntity(Consumer<IDiaEntity> action);
+        Iterator<T> iterator();
     }
 
     void init();
 
-    int createEntity(IDiaComponent[] components);
+    int createEntity(Object[] components);
 
     boolean deleteEntity(int entity);
 
-    IDiaComponent[] retrieveEntity(int entity);
+    Object[] retrieveEntity(int entity);
 
-    void registerSystem(DiaSystem system);
+    Iterator<Object> queryEntitiesWith(Class<?>[] components);
+
+    void scheduleSystem(DiaSystem system);
 
     void unregisterSystem(DiaSystem system);
 
