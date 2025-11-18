@@ -25,14 +25,11 @@ public final class QueryResult {
     }
 
     // METHODS
-    public QueryResult forEachEntity(Consumer<Entity> function) {
+    public Iterator<Entity> getResults() {
         for (Archetype c : queriedCompositions.values()) {
-            Iterator<Entity> filteredIterator = c.getPartition().iterator(componentIndex);
-            while (filteredIterator.hasNext()) {
-                function.accept(filteredIterator.next());
-            }
+            return c.getPartition().iterator(componentIndex);
         }
-        return this;
+        return null;
     }
 
     public void withState(Enum<?> state) {

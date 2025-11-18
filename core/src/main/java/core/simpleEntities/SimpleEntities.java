@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class SimpleEntities implements DiaEntityPool {
 
-    private static class Entity {
+    public static class Entity {
         // ATTRIBUTES
         protected final int id;
         protected Object[] components;
@@ -26,11 +26,18 @@ public class SimpleEntities implements DiaEntityPool {
         }
     }
 
-    public static class SimpleEntitiesIterator implements Iterator<Object> {
+    public static class QueryResult implements DiaQueryResult<Entity> {
+        @Override
+        public Iterator<Entity> iterator() {
+            return null;
+        }
+    }
 
-        private final Collection<Entity> entities;
+    public static class SimpleEntitiesIterator implements Iterator<Entity> {
+
+        Collection<Entity> entities;
         private int iterated = 0;
-        private int count;
+        private final int count;
 
         public SimpleEntitiesIterator(Collection<Entity> entities) {
             this.entities = entities;

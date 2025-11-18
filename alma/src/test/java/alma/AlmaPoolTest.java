@@ -1,8 +1,11 @@
 package alma;
 
+import alma.architecture.QueryResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.TestComponent;
+
+import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,7 +33,7 @@ class AlmaPoolTest {
 
     @BeforeEach
     void setUp() {
-        sut = AlmaPool.Factory.create();
+        sut = new AlmaPool();
     }
 
     @Test
@@ -53,11 +56,14 @@ class AlmaPoolTest {
         sut.createEntity(composition123);
         sut.createEntity(composition23);
         sut.createEntity(composition312);
-        sut.queryEntitiesWith(new Class<?>[]{C2.class, C3.class}).forEachEntity(result -> {
-            System.out.println(result.id());
-            for (int i = 0; i < result.components().length; i++) {
-                System.out.println(result.components()[i]);
+        Iterator<Entity> results = sut.queryEntitiesWith(new Class<?>[]{C2.class, C3.class}).getResults();
+        if (results != null) {
+            while (results.hasNext()) {
+                Entity result = results.next();
+                for (int i = 0; i < result.components().length; i++) {
+                    System.out.println(result.components()[i]);
+                }
             }
-        });
+        }
     }
 }

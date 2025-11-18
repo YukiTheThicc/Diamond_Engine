@@ -4,18 +4,20 @@ import alma.AlmaPool;
 import api.DiaEntityPool;
 import api.DiaSystem;
 
+import java.util.Iterator;
+
 /**
  * Alma
  *
  * @author Santiago Barreiro
  */
-public class Alma implements DiaEntityPool {
+public class AlmaWrapper implements DiaEntityPool {
 
     AlmaPool alma = null;
 
     @Override
     public void init() {
-        alma = AlmaPool.Factory.create();
+        alma =new AlmaPool();
     }
 
     @Override
@@ -31,6 +33,11 @@ public class Alma implements DiaEntityPool {
     @Override
     public Object[] retrieveEntity(int entity) {
         return new Object[0];
+    }
+
+    @Override
+    public Iterator<Object> queryEntitiesWith(Class<?>[] components) {
+        return null;
     }
 
     @Override

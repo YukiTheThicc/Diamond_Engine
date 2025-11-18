@@ -25,7 +25,7 @@ public final class AlmaPool {
     private int partitionIndex = -1;
 
     // CONSTRUCTORS
-    private AlmaPool() {
+    public AlmaPool() {
         this.idHandler = new IdHandler();
         this.classIndex = new ClassIndex();
         this.cm = new ArchetypeMap();
@@ -55,11 +55,5 @@ public final class AlmaPool {
             componentsIndex[i] = classIndex.get(componentQuery[i]);
         }
         return new QueryResult(componentsIndex, compositions);
-    }
-
-    public static class Factory {
-        public static AlmaPool create() {
-            return new AlmaPool();
-        }
     }
 }

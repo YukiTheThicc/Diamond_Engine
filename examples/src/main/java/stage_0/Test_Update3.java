@@ -48,7 +48,7 @@ public class Test_Update3 {
         assetPool = new AssetPool(logger, new GLAssetLoader(logger));
         glRenderer = new GLRenderer(logger);
         glRenderer.drawGrid(true);
-        alma = new Alma();
+        alma = new AlmaWrapper();
         simpleEntities = new SimpleEntities();
 
         diamond = new Diamond(
@@ -135,7 +135,7 @@ public class Test_Update3 {
             public void onEvent(EventPool.Event event) {
                 System.out.println("Engine starting event");
                 for (int i = 0; i < 10; i++) {
-                    simpleEntities.createEntity(new DiaEntityPool.IDiaComponent[]{
+                    simpleEntities.createEntity(new Object[]{
                             new Transform(
                                     new Vector3f(DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-3f, 3f), DiaMath.randomFloat(-2f, -12f)),
                                     new Vector3f(1,1,1),

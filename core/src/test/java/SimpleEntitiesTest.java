@@ -1,3 +1,5 @@
+import alma.Entity;
+import api.DiaEntityPool;
 import api.DiaEntityPool.*;
 import api.DiaSystem;
 import core.assets.Texture;
@@ -8,6 +10,8 @@ import org.joml.Vector3f;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,7 +51,16 @@ public class SimpleEntitiesTest {
         final int[] count = {0,0};
         sut.scheduleSystem(new DiaSystem() {
             @Override
-            public void execute(Object[] components, float dt) {
+            public void execute(DiaEntityPool pool, float dt) {
+                Iterator<Object> results = pool.queryEntitiesWith(new Class[] {Transform.class});
+                if (results != null) {
+                    while (results.hasNext()) {
+                        Entity result = results.next();
+                        for (int i = 0; i < result.components().length; i++) {
+                            System.out.println(result.components()[i]);
+                        }
+                    }
+                }
                 for (Object component : components) {
                     if (component instanceof Transform) {
                         ((Transform) component).pos.add(2 * dt,2 * dt,2 * dt);
@@ -60,7 +73,8 @@ public class SimpleEntitiesTest {
         sut.scheduleSystem(new DiaSystem() {
 
             @Override
-            public void execute(Object[] components, float dt) {
+            public void execute(DiaEntityPool pool, float dt) {
+
                 for (Object component : components) {
                     if (component instanceof Mesh) {
                         count[1]++;

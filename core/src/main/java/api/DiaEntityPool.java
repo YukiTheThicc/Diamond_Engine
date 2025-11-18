@@ -10,7 +10,6 @@ import java.util.Iterator;
 public interface DiaEntityPool {
 
     interface DiaQueryResult<T> extends Iterable<T>{
-
         Iterator<T> iterator();
     }
 
