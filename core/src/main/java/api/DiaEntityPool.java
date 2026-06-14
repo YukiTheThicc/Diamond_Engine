@@ -1,5 +1,7 @@
 package api;
 
+import core.simpleEntities.SimpleEntities;
+
 import java.util.Iterator;
 
 /**
@@ -21,7 +23,7 @@ public interface DiaEntityPool {
 
     Object[] retrieveEntity(int entity);
 
-    Iterator<Object> queryEntitiesWith(Class<?>[] components);
+    SimpleEntities.SimpleEntitiesIterator queryEntitiesWith(Class<?>[] components);
 
     void scheduleSystem(DiaSystem system);
 

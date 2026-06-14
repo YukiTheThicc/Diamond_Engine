@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 /**
  * Test_Version
+ * IMPLEMENTS A SIMPLE 2D EXAMPLE THAT DRAWS TEH HELLO TRIANGLE AND A TEXTURED SQUARE
  *
  * @author: Santiago Barreiro
  */

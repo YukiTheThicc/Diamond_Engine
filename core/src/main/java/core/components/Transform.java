@@ -8,7 +8,7 @@ import org.joml.Vector3f;
  *
  * @author Santiago Barreiro
  */
-public class Transform implements DiaEntityPool.IDiaComponent {
+public class Transform {
 
     // ATTRIBUTES
     public Vector3f pos;
@@ -26,9 +26,4 @@ public class Transform implements DiaEntityPool.IDiaComponent {
 
 
     // METHODS
-
-    @Override
-    public DiaEntityPool.IDiaComponent copy() {
-        return null;
-    }
 }

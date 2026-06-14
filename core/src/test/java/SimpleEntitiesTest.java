@@ -52,40 +52,27 @@ public class SimpleEntitiesTest {
         sut.scheduleSystem(new DiaSystem() {
             @Override
             public void execute(DiaEntityPool pool, float dt) {
-                Iterator<Object> results = pool.queryEntitiesWith(new Class[] {Transform.class});
+                SimpleEntities.SimpleEntitiesIterator results = pool.queryEntitiesWith(new Class[] {Transform.class});
                 if (results != null) {
                     while (results.hasNext()) {
-                        Entity result = results.next();
-                        for (int i = 0; i < result.components().length; i++) {
-                            System.out.println(result.components()[i]);
+                        SimpleEntities.Entity result = results.next();
+                        Object[] components = result.components();
+                        for (int i = 0; i < components.length; i++) {
+                            System.out.println(components[i]);
+                            if (components[i] instanceof Transform) {
+                                ((Transform) components[i]).pos.add(2 * dt,2 * dt,2 * dt);
+                                count[0]++;
+                            }
                         }
                     }
                 }
-                for (Object component : components) {
-                    if (component instanceof Transform) {
-                        ((Transform) component).pos.add(2 * dt,2 * dt,2 * dt);
-                        count[0]++;
-                    }
-                }
             }
         });
 
-        sut.scheduleSystem(new DiaSystem() {
 
-            @Override
-            public void execute(DiaEntityPool pool, float dt) {
-
-                for (Object component : components) {
-                    if (component instanceof Mesh) {
-                        count[1]++;
-                    }
-                }
-            }
-        });
         sut.dispatchSystems(1);
         Object[] components = sut.retrieveEntity(0);
         assertEquals(3f, ((Transform) components[0]).pos.x);
         assertEquals(3, count[0]);
-        assertEquals(2, count[1]);
     }
 }

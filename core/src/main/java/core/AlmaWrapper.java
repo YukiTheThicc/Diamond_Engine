@@ -3,8 +3,7 @@ package core;
 import alma.AlmaPool;
 import api.DiaEntityPool;
 import api.DiaSystem;
-
-import java.util.Iterator;
+import core.simpleEntities.SimpleEntities;
 
 /**
  * Alma
@@ -36,7 +35,7 @@ public class AlmaWrapper implements DiaEntityPool {
     }
 
     @Override
-    public Iterator<Object> queryEntitiesWith(Class<?>[] components) {
+    public SimpleEntities.SimpleEntitiesIterator queryEntitiesWith(Class<?>[] components) {
         return null;
     }
 

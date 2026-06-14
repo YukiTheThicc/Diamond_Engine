@@ -7,6 +7,7 @@ import java.util.*;
 
 /**
  * SimpleEntities
+ * A simple and naive implementation of an entity architecture. Made for testing and benchmarking purposes
  *
  * @author Santiago Barreiro
  */
@@ -24,6 +25,10 @@ public class SimpleEntities implements DiaEntityPool {
             this.archetype = new ArrayList<>(Arrays.stream(archetype).toList());
             this.components = components;
         }
+
+        public Object[] components() {
+            return components;
+        }
     }
 
     public static class QueryResult implements DiaQueryResult<Entity> {
@@ -35,12 +40,12 @@ public class SimpleEntities implements DiaEntityPool {
 
     public static class SimpleEntitiesIterator implements Iterator<Entity> {
 
-        Collection<Entity> entities;
+        List<Entity> entities;
         private int iterated = 0;
         private final int count;
 
         public SimpleEntitiesIterator(Collection<Entity> entities) {
-            this.entities = entities;
+            this.entities = entities.stream().toList();
             this.count = entities.size();
         }
 
@@ -51,7 +56,9 @@ public class SimpleEntities implements DiaEntityPool {
 
         @Override
         public Entity next() {
-            return null;
+            Entity e = entities.get(iterated);
+            iterated++;
+            return e;
         }
     }
 
@@ -96,12 +103,12 @@ public class SimpleEntities implements DiaEntityPool {
         return null;
     }
 
-    public Iterator<Object> queryEntitiesWith(Class<?>[] types) {
+    public SimpleEntitiesIterator queryEntitiesWith(Class<?>[] types) {
         return new SimpleEntitiesIterator(entities.values());
     }
 
     @Override
-    public void scheduleSystem(DiaSystem system) {
+    public void scheduleSystem(DiaSystem system)     {
         systems.add(system);
     }
 

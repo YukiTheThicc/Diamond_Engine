@@ -26,6 +26,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 /**
  * Test_Version
+ * IMPLEMENTS A SIMPLE 3D SCENE WITH CUBES, SOME ROTATING SOME STATIC. THE CAMERA CAN BE MOVED WITH THE MOUSE AND WASD
  *
  * @author: Santiago Barreiro
  */
@@ -239,15 +240,9 @@ public class Test_Update2 {
                 -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
         };
 
-        int[] indices = {
-                0, 1, 3, // first triangle
-                1, 2, 3  // second triangle
-        };
-
-        int VBO, VAO, EBO;
+        int VBO, VAO;
         VAO = glGenVertexArrays();
         VBO = glGenBuffers();
-        EBO = glGenBuffers();
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
